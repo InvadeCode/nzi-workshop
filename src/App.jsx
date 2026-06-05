@@ -129,7 +129,7 @@ export default function WebsiteWorkshopApp() {
         systemInstruction: { parts: [{ text: systemPrompt }] }
       };
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=AIzaSyAA4aTmPIvqZ1kACtETxTvoveRVTyMHOF8`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

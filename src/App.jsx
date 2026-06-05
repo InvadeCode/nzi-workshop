@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, ArrowLeft, Check, RefreshCcw, Download, Globe, Info, Loader2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check, RefreshCcw, Download, Globe, Info, Loader2, Sparkles } from 'lucide-react';
 
 // --- Website UI/UX Strategy Workshop Data ---
 const QUESTIONS = [
@@ -86,6 +86,8 @@ export default function WebsiteWorkshopApp() {
   const [animateState, setAnimateState] = useState('enter'); 
   const [showExplanation, setShowExplanation] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [aiSummary, setAiSummary] = useState(null);
+  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
 
   const changeStep = (newStep) => {
     setAnimateState('exit');
@@ -108,6 +110,44 @@ export default function WebsiteWorkshopApp() {
       return () => clearTimeout(timer);
     }
   }, [animateState, step]);
+
+  useEffect(() => {
+    if (step === QUESTIONS.length + 1 && !aiSummary && !isGeneratingSummary) {
+      generateAISummary();
+    }
+  }, [step]);
+
+  const generateAISummary = async () => {
+    setIsGeneratingSummary(true);
+    try {
+      const qaText = QUESTIONS.map(q => `Q: ${q.text}\nA: ${answers[q.id] || 'Not answered'}`).join('\n\n');
+      const systemPrompt = "Act as an expert digital strategist and UX architect. Provide a concise, 2-paragraph executive summary outlining the website architecture, user experience, and visual direction based on the user's workshop answers. DO NOT use markdown like asterisks for bolding. Use plain text paragraphs only.";
+      const userPrompt = `Based on the following answers from a website strategy workshop for 'NetZero India', provide the executive summary.\n\nWorkshop Data:\n${qaText}`;
+      
+      const payload = {
+        contents: [{ parts: [{ text: userPrompt }] }],
+        systemInstruction: { parts: [{ text: systemPrompt }] }
+      };
+
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json();
+      const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (text) {
+        setAiSummary(text);
+      } else {
+        setAiSummary("Summary generation completed with no text.");
+      }
+    } catch (e) {
+      console.error(e);
+      setAiSummary("An error occurred while generating the AI summary.");
+    } finally {
+      setIsGeneratingSummary(false);
+    }
+  };
 
   const generatePDF = async () => {
     setIsGeneratingPDF(true);
@@ -378,6 +418,18 @@ export default function WebsiteWorkshopApp() {
                     <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">NetZero India Foundation x PurpleBlue House</p>
                   </div>
 
+                  {}
+                  {aiSummary && (
+                    <div className="mb-8 bg-[#f8f9fa] p-6 rounded-xl border border-gray-200 break-inside-avoid">
+                      <div className="text-sm font-bold text-gray-800 uppercase tracking-widest mb-3">
+                        AI Strategic Summary
+                      </div>
+                      <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                        {aiSummary}
+                      </div>
+                    </div>
+                  )}
+
                   <div className="space-y-6">
                     {QUESTIONS.map((q, idx) => (
                       <div key={q.id} className="break-inside-avoid pb-4 border-b border-gray-200">
@@ -406,8 +458,28 @@ export default function WebsiteWorkshopApp() {
                     <p className="text-xs text-black/50 mt-1 font-medium">Review your strategic parameters before exporting.</p>
                   </div>
 
+                  {}
+                  <div className="mb-6 bg-gradient-to-br from-blue-50 to-emerald-50 border border-blue-900/10 rounded-2xl p-5 relative overflow-hidden shadow-inner">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-blue-950 to-emerald-950"></div>
+                    <h3 className="text-sm font-semibold text-blue-950 flex items-center gap-2 mb-3">
+                      <Sparkles size={16} className="text-emerald-700" /> Executive Strategy Summary
+                    </h3>
+                    {isGeneratingSummary ? (
+                      <div className="flex items-center text-sm text-blue-900/60 py-4 font-medium">
+                        <Loader2 size={16} className="animate-spin mr-2" />
+                        Analyzing parameters & generating strategic insights...
+                      </div>
+                    ) : aiSummary ? (
+                      <p className="text-sm text-blue-950/80 leading-relaxed whitespace-pre-wrap">
+                        {aiSummary}
+                      </p>
+                    ) : (
+                      <p className="text-sm text-blue-900/50 italic">AI Summary could not be generated.</p>
+                    )}
+                  </div>
+
                   {/* Scrollable Summary List */}
-                  <div className="space-y-6 mb-8 max-h-[45vh] overflow-y-auto pr-4">
+                  <div className="space-y-6 mb-8 max-h-[40vh] overflow-y-auto pr-4">
                     {QUESTIONS.map((q, idx) => (
                       <div key={q.id} className="pb-4 border-b border-black/5 last:border-0">
                         <div className="text-[10px] font-semibold text-black/40 uppercase tracking-wider mb-1">
@@ -439,6 +511,7 @@ export default function WebsiteWorkshopApp() {
                     <button 
                       onClick={() => {
                         setAnswers({});
+                        setAiSummary(null);
                         changeStep(0);
                       }}
                       className="flex-1 flex items-center justify-center px-6 py-3.5 bg-white/60 backdrop-blur-sm border border-white/80 text-black rounded-2xl font-medium text-sm hover:bg-white hover:shadow-sm transition-all duration-300"

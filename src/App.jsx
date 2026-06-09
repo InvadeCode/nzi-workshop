@@ -216,8 +216,8 @@ export default function WebsiteWorkshopApp() {
         const payload = {
           contents: [{ parts: [{ text: systemPrompt + "\n\n" + userPrompt }] }],
           generationConfig: { 
-            temperature: 0.7, 
-            maxOutputTokens: 1000 // CRITICAL FIX: Increased token limit significantly to prevent cutoff
+            temperature: 0.6, 
+            maxOutputTokens: 3000 // CRITICAL FIX: Increased token limit significantly to prevent cutoff
           } 
         };
 
@@ -436,7 +436,7 @@ export default function WebsiteWorkshopApp() {
                       onClick={() => handleTextSubmit(currentQuestion.id)}
                       disabled={!inputValue.trim()}
                       className="flex items-center px-8 py-4 bg-gradient-to-r from-blue-950/90 to-emerald-950/90 text-white border border-white/10 rounded-2xl font-semibold text-xs disabled:opacity-30 hover:opacity-100 hover:shadow-md transition-all"
-                    >
+                    >  
                       Finalize Entry <ArrowRight className="ml-2 w-3.5 h-3.5" />
                     </button>
                   </div>

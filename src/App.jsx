@@ -9,105 +9,79 @@ const SUPABASE_SERVICE_KEY = import.meta.env?.VITE_SUPABASE_SERVICE_KEY;
 const QUESTIONS = [
   { 
     id: 'q1', 
-    type: 'text', 
-    text: "Let's imagine India in 2070. Write one headline you would like to read about India.", 
-    explanation: "Forces visionary thinking. A great institution must clearly articulate the future it is trying to build."
+    type: 'choice', 
+    text: "Who is the absolute primary audience this website must convert or engage?", 
+    options: ["Policymakers & Government Officials", "Corporate Sustainability Leaders", "Academic Researchers & Think Tanks", "The General Public / Grassroots"],
+    explanation: "Forces priority. A website designed for policymakers requires deep data architecture; one for the public needs emotional storytelling."
   },
   { 
     id: 'q2', 
-    type: 'text', 
-    text: "When NZI achieves what it sets out to, how do you describe NZI's part? Without NZI, India would struggle to...", 
-    explanation: "Defines the core problem statement and the unique value proposition of the institution."
+    type: 'choice', 
+    text: "What is the single most critical action a user should take on the homepage?", 
+    options: ["Download a strategic report / framework", "Sign up for community updates", "Explore an interactive data dashboard", "Contact the team for collaboration"],
+    explanation: "Defines the primary User Journey (UX). The 'Hero' section of the site will be engineered entirely around driving this one specific action."
   },
   { 
     id: 'q3', 
-    type: 'ranking', 
-    text: "Select exactly 3 adjectives that describe the brand's essence.", 
-    options: ["Authoritative", "Strategic", "Innovative", "Disruptive", "Compassionate", "Humble", "Wise", "Visionary"],
-    explanation: "Distills the brand personality down to its most potent, recognizable traits."
+    type: 'choice', 
+    text: "Which of these best describes the desired visual aesthetic (UI)?", 
+    options: ["Corporate & Authoritative (Navy blues, structured grids)", "Academic & Data-Driven (Minimalist, heavy white space)", "Vibrant & Community-Focused (Warm colors, illustrations)", "High-Tech & Futuristic (Dark mode, neon accents)"],
+    explanation: "Aligns the visual design language with the brand's archetype to ensure the site 'looks' like how the organization behaves."
   },
   { 
     id: 'q4', 
     type: 'choice', 
-    text: "Who are we primarily building this for? Select the target persona.", 
-    options: ["Undergraduate Aspirant (17-20 yrs)", "Post-Graduate Aspirant (22-26 yrs)", "Subject Matter Expert / Policy Advisor"],
-    explanation: "Identifies the core audience. The language, tone, and design of the website must directly appeal to this persona."
+    text: "How should complex data and reports be presented?", 
+    options: ["Downloadable PDF reports only", "Interactive, filterable web dashboards", "Simplified infographics and summaries", "Dense, academic-style long-form articles"],
+    explanation: "Data architecture is critical for a NetZero initiative. This defines the backend requirements and front-end data visualization strategy."
   },
   { 
     id: 'q5', 
     type: 'choice', 
-    text: "What story are we currently telling (intentionally or not)?", 
-    options: ["A traditional academic institution", "A government-affiliated think tank", "A fragmented, multi-disciplinary lab", "A modern, future-focused strategy hub"],
-    explanation: "Audits current brand perception to understand the gap between 'where we are' and 'where we need to be'."
+    text: "What is the primary tone of voice for the website copy?", 
+    options: ["Urgent & Action-Oriented (The Hero)", "Wise, Objective & Educational (The Sage)", "Authoritative & Directing (The Ruler)", "Inspiring & Visionary (The Creator)"],
+    explanation: "Copywriting dictates how the brand sounds. This ensures consistency across all headlines, buttons, and about pages."
   },
   { 
     id: 'q6', 
-    type: 'choice', 
-    text: "Where does NZI meet its audience? Select the primary brand touchpoint.", 
-    options: ["Academic Journals & Policy Briefs", "The Main Website & Digital Portal", "High-level Government Summits", "University Campus & Physical Events"],
-    explanation: "Maps the customer journey. If the website is the primary touchpoint, it requires the most investment in UX/UI."
+    type: 'ranking', 
+    text: "Rank these 3 website goals in order of importance (Select 1st, 2nd, 3rd).", 
+    options: ["Establishing Global Credibility", "Driving Local Community Action", "Showcasing Technical Innovation"],
+    explanation: "When resources are limited, ranking forces leadership to decide what the website must accomplish first before anything else."
   },
   { 
     id: 'q7', 
     type: 'choice', 
-    text: "This or That: Mukesh Ambani (Authoritative/Strategic) OR Bear Grylls (Adventurous/Risk-taking)?", 
-    options: ["Mukesh Ambani", "Bear Grylls", "None of the above"],
-    explanation: "Forces a choice between distinct leadership styles to refine the brand's voice."
+    text: "How should the 'About Us' section be structured?", 
+    options: ["Focus on the founding legacy and history", "Focus on the team's academic/technical credentials", "Focus on the future vision and roadmap to 2070", "Focus on community impact and stories"],
+    explanation: "Determines how trust is built. Do we build trust through past achievements, current expertise, or future vision?"
   },
   { 
     id: 'q8', 
     type: 'choice', 
-    text: "This or That: Steve Jobs (Innovative/Perfectionist) OR Lata Mangeshkar (Pure/Uplifting)?", 
-    options: ["Steve Jobs", "Lata Mangeshkar", "None of the above"],
-    explanation: "Forces a choice between technological innovation and emotional resonance."
+    text: "What type of imagery should dominate the website?", 
+    options: ["Real people and community action shots", "High-tech clean energy infrastructure", "Abstract, clean data visualizations", "Premium, corporate leadership environments"],
+    explanation: "Photography and imagery create the immediate emotional connection. This dictates the art direction for the entire digital platform."
   },
   { 
     id: 'q9', 
     type: 'choice', 
-    text: "This or That: A.P.J. Abdul Kalam (Wise/Guiding) OR Sudha Murty (Compassionate/Nurturing)?", 
-    options: ["A.P.J. Abdul Kalam", "Sudha Murty", "None of the above"],
-    explanation: "Forces a choice between intellectual leadership and empathetic caregiving."
+    text: "How frequently will the website content be updated?", 
+    options: ["Rarely (Static brochure site)", "Monthly (New reports and major updates)", "Weekly (Active blog and newsroom)", "Daily (Live data feeds and community tracking)"],
+    explanation: "Critical for Content Management System (CMS) selection. A static site requires a different backend than a daily newsroom."
   },
   { 
     id: 'q10', 
     type: 'choice', 
-    text: "This or That: Johny Lever (Playful/Witty) OR Ratan Tata (Humble/Grounded)?", 
-    options: ["Johny Lever", "Ratan Tata", "None of the above"],
-    explanation: "Checks the brand's level of formality and approachability."
+    text: "What is the primary technical requirement for the platform?", 
+    options: ["Extreme mobile responsiveness (Grassroots)", "High security and data privacy (Corporate)", "Flawless accessibility for all users (Government)", "High-speed rendering of complex 3D/Data (Tech)"],
+    explanation: "Defines the core development focus. Guides the engineering team on where to spend their technical optimization budget."
   },
   { 
     id: 'q11', 
-    type: 'choice', 
-    text: "This or That: Bhagat Singh (Disruptive/Bold) OR Walt Disney (Imaginative/Visionary)?", 
-    options: ["Bhagat Singh", "Walt Disney", "None of the above"],
-    explanation: "Checks the brand's appetite for challenging the status quo vs. dreaming of new futures."
-  },
-  { 
-    id: 'q12', 
-    type: 'choice', 
-    text: "Based on previous answers, which Brand Archetype best fits NZI?", 
-    options: ["Ruler (Authority/Legacy)", "Hero (Courageous/Mission-driven)", "Sage (Knowledge/Strategy)", "Outlaw (Disruptive/Bold)"],
-    explanation: "The ultimate brand classification. This dictates typography, colors, imagery, and copywriting tone."
-  },
-  { 
-    id: 'q13', 
-    type: 'ranking', 
-    text: "What 3 Sustainable Development Goals (SDGs) should India prioritise by 2070?", 
-    options: ["Affordable & Clean Energy", "Sustainable Cities", "Industry & Innovation", "Climate Action", "Quality Education", "Decent Work & Growth"],
-    explanation: "Connects the brand's mission to actionable, globally recognized goals."
-  },
-  { 
-    id: 'q14', 
-    type: 'choice', 
-    text: "Landscape Mapping: Where does BDU sit on the spectrum?", 
-    options: ["Legacy/Heritage (e.g., Oxford)", "Intellectual Authority (e.g., NUS)", "Disruptive Innovation (e.g., MIT Media Lab)", "Cultural Resonance (e.g., King's College)"],
-    explanation: "Positions the brand against competitors to find 'white space' in the market."
-  },
-  { 
-    id: 'q15', 
     type: 'text', 
-    text: "Final Question: What are 5 emotions people should instantly recognise and associate with the brand?", 
-    explanation: "Provides the creative team with the emotional brief for all future design and copy."
+    text: "In one sentence, what is the core message the website must communicate within the first 3 seconds of a user landing?", 
+    explanation: "The 'Blink Test'. This forces the distillation of the entire brand strategy into a single, punchy Hero Headline."
   }
 ];
 

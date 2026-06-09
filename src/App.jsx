@@ -5,29 +5,91 @@ import { ArrowRight, ArrowLeft, Check, RefreshCcw, Download, Info, Globe, Sparkl
 const SUPABASE_URL = import.meta.env?.VITE_SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = import.meta.env?.VITE_SUPABASE_SERVICE_KEY;
 
-// --- Workshop Data (Mapped from PurpleBlue House PDF) ---
+// --- Website Strategy Workshop Data ---
 const QUESTIONS = [
-  { id: 'q1', type: 'text', text: "Let's imagine India in 2070. Write one headline you would like to read about India in 2070.", explanation: "Forces us to think about the ultimate end-goal and real-world impact of the initiative." },
-  { id: 'q2', type: 'text', text: "Where does NZI sit in this future? What part did it play?", explanation: "Clarifies NZI's specific contribution to that ideal future." },
-  { id: 'q3', type: 'text', text: "Write 3 adjectives that describe the brand's essence in the future.", explanation: "Distills the brand's personality into its simplest, most memorable form." },
-  { id: 'q4', type: 'text', text: "Meet the Person: Who are we building this for? (Describe their role, city, and what they seek from NZI)", explanation: "Ensures the brand is speaking to a specific, real person rather than a generic crowd." },
-  { id: 'q5', type: 'text', text: "Fill in the blank: Without NZI, India would struggle to...", explanation: "Defines the brand's core utility and what is at stake if it fails." },
-  { id: 'q6', type: 'text', text: "What are the 5 touchpoints that matter the most for people experiencing NZI?", explanation: "Identifies where the brand actually lives in the real world (website, reports, events, etc)." },
-  { id: 'q7', type: 'choice', text: "If NZI were a person, which personality aligns best? (Round 1)", options: ["Mukesh Ambani (Authoritative, strategic)", "Bear Grylls (Adventurous, risk-taking)", "None of the above"], explanation: "Uses familiar personalities to quickly align on complex behavioral traits." },
-  { id: 'q8', type: 'choice', text: "If NZI were a person, which personality aligns best? (Round 2)", options: ["Steve Jobs (Innovative, perfectionist)", "Lata Mangeshkar (Pure, emotionally uplifting)", "None of the above"], explanation: "Uses familiar personalities to quickly align on complex behavioral traits." },
-  { id: 'q9', type: 'choice', text: "If NZI were a person, which personality aligns best? (Round 3)", options: ["A.P.J. Abdul Kalam (Wise, guiding)", "Sudha Murty (Compassionate, nurturing)", "None of the above"], explanation: "Uses familiar personalities to quickly align on complex behavioral traits." },
-  { id: 'q10', type: 'choice', text: "If NZI were a person, which personality aligns best? (Round 4)", options: ["Bhagat Singh (Disruptive, bold)", "Walt Disney (Imaginative, visionary)", "None of the above"], explanation: "Uses familiar personalities to quickly align on complex behavioral traits." },
-  { id: 'q11', type: 'choice', text: "If NZI were a person, which personality aligns best? (Round 5)", options: ["Johny Lever (Playful, witty)", "Ratan Tata (Humble, relatable)", "None of the above"], explanation: "Uses familiar personalities to quickly align on complex behavioral traits." },
-  { id: 'q12', type: 'choice', text: "Based on the personalities, which primary Brand Archetype should NZI adopt?", options: ["The Ruler (Authority, Legacy)", "The Sage (Knowledge, Strategy)", "The Hero (Courageous, Mission-driven)", "The Outlaw (Disruptive, Bold)"], explanation: "Assigns a globally recognized psychological archetype to guide all future messaging and design." },
-  { id: 'q13', type: 'choice', text: "Which SDG area must India prioritise most strongly over the next 50 years?", options: ["Affordable & Clean Energy", "Sustainable Cities & Communities", "Industry, Innovation & Infrastructure", "Climate Action"], explanation: "Connects the brand's mission to actionable, globally recognized sustainability goals." },
-  { id: 'q14', type: 'choice', text: "Where does NZI sit on the positioning matrix?", options: ["Legacy & Heritage", "Disruptive Innovation", "Intellectual & Functional Authority", "Cultural Resonance"], explanation: "Plots the brand against competitors to find a unique, ownable white space in the market." },
-  { id: 'q15', type: 'text', text: "What are 5 emotions people should instantly recognise and associate with NZI as a brand?", explanation: "Defines the immediate gut-reaction the brand should evoke when encountered." }
+  { 
+    id: 'q1', 
+    type: 'choice', 
+    text: "Who is the absolute primary audience this website must convert or engage?", 
+    options: ["Policymakers & Government Officials", "Corporate Sustainability Leaders", "Academic Researchers & Think Tanks", "The General Public / Grassroots"],
+    explanation: "Forces priority. A website designed for policymakers requires deep data architecture; one for the public needs emotional storytelling."
+  },
+  { 
+    id: 'q2', 
+    type: 'choice', 
+    text: "What is the single most critical action a user should take on the homepage?", 
+    options: ["Download a strategic report / framework", "Sign up for community updates", "Explore an interactive data dashboard", "Contact the team for collaboration"],
+    explanation: "Defines the primary User Journey (UX). The 'Hero' section of the site will be engineered entirely around driving this one specific action."
+  },
+  { 
+    id: 'q3', 
+    type: 'choice', 
+    text: "Which of these best describes the desired visual aesthetic (UI)?", 
+    options: ["Corporate & Authoritative (Navy blues, structured grids)", "Academic & Data-Driven (Minimalist, heavy white space)", "Vibrant & Community-Focused (Warm colors, illustrations)", "High-Tech & Futuristic (Dark mode, neon accents)"],
+    explanation: "Aligns the visual design language with the brand's archetype to ensure the site 'looks' like how the organization behaves."
+  },
+  { 
+    id: 'q4', 
+    type: 'choice', 
+    text: "How should complex data and reports be presented?", 
+    options: ["Downloadable PDF reports only", "Interactive, filterable web dashboards", "Simplified infographics and summaries", "Dense, academic-style long-form articles"],
+    explanation: "Data architecture is critical for a NetZero initiative. This defines the backend requirements and front-end data visualization strategy."
+  },
+  { 
+    id: 'q5', 
+    type: 'choice', 
+    text: "What is the primary tone of voice for the website copy?", 
+    options: ["Urgent & Action-Oriented (The Hero)", "Wise, Objective & Educational (The Sage)", "Authoritative & Directing (The Ruler)", "Inspiring & Visionary (The Creator)"],
+    explanation: "Copywriting dictates how the brand sounds. This ensures consistency across all headlines, buttons, and about pages."
+  },
+  { 
+    id: 'q6', 
+    type: 'ranking', 
+    text: "Rank these 3 website goals in order of importance (Select 1st, 2nd, 3rd).", 
+    options: ["Establishing Global Credibility", "Driving Local Community Action", "Showcasing Technical Innovation"],
+    explanation: "When resources are limited, ranking forces leadership to decide what the website must accomplish first before anything else."
+  },
+  { 
+    id: 'q7', 
+    type: 'choice', 
+    text: "How should the 'About Us' section be structured?", 
+    options: ["Focus on the founding legacy and history", "Focus on the team's academic/technical credentials", "Focus on the future vision and roadmap to 2070", "Focus on community impact and stories"],
+    explanation: "Determines how trust is built. Do we build trust through past achievements, current expertise, or future vision?"
+  },
+  { 
+    id: 'q8', 
+    type: 'choice', 
+    text: "What type of imagery should dominate the website?", 
+    options: ["Real people and community action shots", "High-tech clean energy infrastructure", "Abstract, clean data visualizations", "Premium, corporate leadership environments"],
+    explanation: "Photography and imagery create the immediate emotional connection. This dictates the art direction for the entire digital platform."
+  },
+  { 
+    id: 'q9', 
+    type: 'choice', 
+    text: "How frequently will the website content be updated?", 
+    options: ["Rarely (Static brochure site)", "Monthly (New reports and major updates)", "Weekly (Active blog and newsroom)", "Daily (Live data feeds and community tracking)"],
+    explanation: "Critical for Content Management System (CMS) selection. A static site requires a different backend than a daily newsroom."
+  },
+  { 
+    id: 'q10', 
+    type: 'choice', 
+    text: "What is the primary technical requirement for the platform?", 
+    options: ["Extreme mobile responsiveness (Grassroots)", "High security and data privacy (Corporate)", "Flawless accessibility for all users (Government)", "High-speed rendering of complex 3D/Data (Tech)"],
+    explanation: "Defines the core development focus. Guides the engineering team on where to spend their technical optimization budget."
+  },
+  { 
+    id: 'q11', 
+    type: 'text', 
+    text: "In one sentence, what is the core message the website must communicate within the first 3 seconds of a user landing?", 
+    explanation: "The 'Blink Test'. This forces the distillation of the entire brand strategy into a single, punchy Hero Headline."
+  }
 ];
 
 export default function WebsiteWorkshopApp() {
   const [step, setStep] = useState(0); 
   const [answers, setAnswers] = useState({});
   const [inputValue, setInputValue] = useState('');
+  const [rankingState, setRankingState] = useState([]); // For ranking questions
   const [animateState, setAnimateState] = useState('enter'); 
   const [showExplanation, setShowExplanation] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
@@ -39,7 +101,7 @@ export default function WebsiteWorkshopApp() {
   // AI & Cloud States
   const [aiSummary, setAiSummary] = useState(null);
   const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
-  const [syncStatus, setSyncStatus] = useState('idle'); // idle, saving, success, error
+  const [syncStatus, setSyncStatus] = useState('idle');
 
   const changeStep = (newStep) => {
     setAnimateState('exit');
@@ -47,11 +109,11 @@ export default function WebsiteWorkshopApp() {
     setTimeout(() => {
       setStep(newStep);
       setAnimateState('enter');
+      // Reset inputs/ranking state when moving
       if (newStep > 0 && newStep <= QUESTIONS.length) {
         const q = QUESTIONS[newStep - 1];
-        if (q.type === 'text') {
-          setInputValue(answers[q.id] || '');
-        }
+        if (q.type === 'text') setInputValue(answers[q.id] || '');
+        if (q.type === 'ranking') setRankingState(answers[q.id] || []);
       }
     }, 400); 
   };
@@ -68,6 +130,25 @@ export default function WebsiteWorkshopApp() {
     changeStep(step + 1);
   };
 
+  const handleRankingChoice = (questionId, option) => {
+    setRankingState(prev => {
+      if (prev.includes(option)) {
+        return prev.filter(item => item !== option); // Deselect
+      }
+      if (prev.length < 3) {
+        return [...prev, option]; // Select
+      }
+      return prev;
+    });
+  };
+
+  const submitRanking = (questionId) => {
+    if (rankingState.length === 3) {
+      setAnswers(prev => ({ ...prev, [questionId]: rankingState }));
+      changeStep(step + 1);
+    }
+  };
+
   const handleTextSubmit = (questionId) => {
     if (!inputValue.trim()) return;
     setAnswers(prev => ({ ...prev, [questionId]: inputValue }));
@@ -76,7 +157,7 @@ export default function WebsiteWorkshopApp() {
   };
 
   const handleKeyDown = (e, questionId) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && inputValue.trim()) {
       handleTextSubmit(questionId);
     }
   };
@@ -119,16 +200,33 @@ export default function WebsiteWorkshopApp() {
     let generatedText = "";
     try {
       const apiKey = import.meta.env?.VITE_GEMINI_API_KEY || "";
-      const qaText = QUESTIONS.map(q => `Q: ${q.text}\nA: ${answers[q.id] || 'Not answered'}`).join('\n\n');
-      const systemPrompt = "Act as an expert brand strategist from PurpleBlue House. Provide a concise, 2-paragraph executive summary outlining the brand's future vision, archetype, and positioning strategy based on the user's workshop answers. DO NOT use markdown like asterisks for bolding. Use plain text paragraphs only.";
-      const userPrompt = `Workshop Participant: ${userName} (${userEmail})\n\nBased on the following answers from the PurpleBlue House Branding Workshop for 'NetZero India', provide the executive brand summary.\n\nWorkshop Data:\n${qaText}`;
+      
+      // Format answers for AI
+      const qaText = QUESTIONS.map(q => {
+        let ans = answers[q.id] || 'Not answered';
+        if (Array.isArray(ans)) {
+          ans = `1st: ${ans[0]}, 2nd: ${ans[1]}, 3rd: ${ans[2]}`;
+        }
+        return `Q: ${q.text}\nA: ${ans}`;
+      }).join('\n\n');
+
+      const systemPrompt = `You are a world-class Digital Strategist and UX/UI Architect at a top-tier agency. 
+      Your task is to analyze the user's answers from a website strategy workshop for 'NetZero India' and output a concrete, highly actionable 3-paragraph Website Architecture Brief.
+      
+      Paragraph 1: User Experience (UX) & Core Architecture. Define the primary user journey, the hierarchy of information based on their priorities, and the backend/CMS requirements implied by their update frequency.
+      Paragraph 2: User Interface (UI) & Visual Aesthetic. Dictate the specific art direction, color palette tone, typography vibe, and imagery style based on their selections.
+      Paragraph 3: Content Strategy & Tone. Summarize how the copywriting should sound, how data should be visualized, and how the 'About' narrative should build trust.
+      
+      DO NOT use markdown (no asterisks, no hash symbols). Use professional, agency-level plain text. Be definitive and concrete—do not say "consider doing X", say "The architecture will prioritize X".`;
+      
+      const userPrompt = `Workshop Participant: ${userName} (${userEmail})\n\nWorkshop Data:\n${qaText}`;
       
       if (!apiKey) {
-        generatedText = "API Key not found in environment variables. Based on the selected parameters, the NetZero India platform should prioritize a clear, authoritative architecture that aligns perfectly with the chosen archetype, audience, and functional goals.";
+        generatedText = "API Key not found. Please add your VITE_GEMINI_API_KEY to generate the deep AI UX analysis.";
       } else {
         const payload = {
           contents: [{ parts: [{ text: systemPrompt + "\n\n" + userPrompt }] }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 500 }
+          generationConfig: { temperature: 0.7, maxOutputTokens: 600 }
         };
 
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`, {
@@ -141,16 +239,15 @@ export default function WebsiteWorkshopApp() {
         if (data.candidates && data.candidates[0]) {
           generatedText = data.candidates[0].content.parts[0].text;
         } else {
-          generatedText = "Summary generation completed with default strategic parameters.";
+          generatedText = "Analysis generation failed. Check API limits.";
         }
       }
     } catch (error) {
       console.error("AI Generation Error:", error);
-      generatedText = "An error occurred while generating the AI summary. Please proceed with the manual export.";
+      generatedText = "An error occurred while generating the AI architecture brief.";
     } finally {
       setAiSummary(generatedText);
       setIsGeneratingSummary(false);
-      // Fire off to Supabase once AI is done
       saveToSupabase(generatedText);
     }
   };
@@ -167,12 +264,7 @@ export default function WebsiteWorkshopApp() {
     const generate = () => {
       try {
         const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({
-          orientation: 'portrait',
-          unit: 'in',
-          format: 'letter'
-        });
-
+        const pdf = new jsPDF({ orientation: 'portrait', unit: 'in', format: 'letter' });
         const margin = 0.75;
         const pageWidth = 8.5;
         const pageHeight = 11;
@@ -182,7 +274,7 @@ export default function WebsiteWorkshopApp() {
         const addHeaderFooter = (pageNumber) => {
           pdf.setFontSize(10);
           pdf.setTextColor(80, 80, 80);
-          pdf.text('NetZero India | PurpleBlue House Branding Workshop', margin, 0.4);
+          pdf.text('NetZero India | Website Architecture Blueprint', margin, 0.4);
           pdf.setFontSize(8);
           pdf.text(`Participant: ${userName}`, margin, 0.55);
           pdf.setDrawColor(200, 200, 200);
@@ -197,13 +289,13 @@ export default function WebsiteWorkshopApp() {
 
         pdf.setFontSize(22);
         pdf.setTextColor(0, 0, 0);
-        pdf.text('Brand Strategy Blueprint', margin, currentY);
+        pdf.text('Digital Architecture Brief', margin, currentY);
         currentY += 0.4;
 
         if (aiSummary) {
           pdf.setFontSize(10);
           pdf.setTextColor(0, 100, 0);
-          pdf.text('AI EXECUTIVE SUMMARY', margin, currentY);
+          pdf.text('AI UX/UI STRATEGY ANALYSIS', margin, currentY);
           currentY += 0.2;
           
           pdf.setFontSize(10);
@@ -234,7 +326,12 @@ export default function WebsiteWorkshopApp() {
 
           pdf.setFontSize(11);
           pdf.setTextColor(0, 0, 0);
-          const ansText = answers[q.id] || "—";
+          
+          let ansText = answers[q.id] || "—";
+          if (Array.isArray(ansText)) {
+            ansText = `1st: ${ansText[0]}\n2nd: ${ansText[1]}\n3rd: ${ansText[2]}`;
+          }
+
           const splitA = pdf.splitTextToSize(ansText, contentWidth - 0.2);
           pdf.text(splitA, margin + 0.2, currentY);
           
@@ -245,7 +342,7 @@ export default function WebsiteWorkshopApp() {
           currentY += (splitA.length * 0.2) + 0.3;
         });
 
-        pdf.save('NZI_Brand_Blueprint.pdf');
+        pdf.save('NZI_Website_Architecture_Brief.pdf');
       } catch (err) {
         console.error("PDF Generation failed", err);
       } finally {
@@ -253,7 +350,6 @@ export default function WebsiteWorkshopApp() {
       }
     };
 
-    // Dynamically load jsPDF from CDN
     if (!window.jspdf) {
       const script = document.createElement('script');
       script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
@@ -267,7 +363,7 @@ export default function WebsiteWorkshopApp() {
   const currentQuestion = step > 0 && step <= QUESTIONS.length ? QUESTIONS[step - 1] : null;
 
   return (
-    <div className="h-screen w-full bg-slate-50 text-black overflow-hidden flex flex-col font-sans selection:bg-blue-900 selection:text-white">
+    <div className="h-screen w-full bg-slate-50 text-black overflow-hidden flex flex-col font-sans selection:bg-blue-950 selection:text-white relative">
       
       {/* Global CSS for Poppins, Glassmorphism, and Animations */}
       <style dangerouslySetInnerHTML={{__html: `
@@ -291,11 +387,11 @@ export default function WebsiteWorkshopApp() {
         .fade-exit { opacity: 0; transform: translateY(-15px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         
         .glass-panel {
-          background: rgba(255, 255, 255, 0.7);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
+          background: rgba(255, 255, 255, 0.85);
+          backdrop-filter: blur(24px);
+          -webkit-backdrop-filter: blur(24px);
           border: 1px solid rgba(255, 255, 255, 1);
-          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03), inset 0 0 0 1px rgba(255,255,255,0.8);
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05), inset 0 0 0 1px rgba(255,255,255,0.8);
         }
         
         .custom-scroll::-webkit-scrollbar { width: 4px; }
@@ -313,7 +409,7 @@ export default function WebsiteWorkshopApp() {
           </div>
           <div>
             <h1 className="text-sm font-semibold tracking-tight text-black leading-none">NetZero India</h1>
-            <p className="text-[9px] font-medium text-black/50 uppercase tracking-widest mt-0.5">Brand Strategy</p>
+            <p className="text-[9px] font-medium text-black/50 uppercase tracking-widest mt-0.5">Website Strategy UI/UX</p>
           </div>
         </div>
       </header>
@@ -324,15 +420,15 @@ export default function WebsiteWorkshopApp() {
           
           {/* STEP 0: INTRO */}
           {step === 0 && (
-            <div className="w-full text-center flex flex-col items-center glass-panel p-10 md:p-16 rounded-[2rem]">
-              <div className="inline-block border border-black/10 bg-black/5 px-4 py-1.5 mb-6 rounded-full text-[9px] font-semibold tracking-widest uppercase">
-                Phase 3: Website Identity & Design
+            <div className="w-full text-center flex flex-col items-center glass-panel p-10 md:p-16 rounded-3xl">
+              <div className="inline-block border border-black/10 bg-black/5 px-4 py-1.5 mb-6 rounded-full text-[10px] font-semibold tracking-widest uppercase">
+                Phase 4: Digital Experience
               </div>
               <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-black">
-                Website Identity & Design Workshop
+                Website Architecture Workshop
               </h2>
-              <p className="text-xs text-black/60 mb-10 max-w-sm mx-auto leading-relaxed font-normal">
-                A 15-step interactive diagnostic to define the precise role, audience, and archetype for the NetZero India identity.
+              <p className="text-sm text-black/60 mb-10 max-w-md mx-auto leading-relaxed font-normal">
+                A 11-step interactive diagnostic to define the precise user experience, content strategy, and visual aesthetic for the new NetZero India digital platform.
               </p>
 
               {/* User Details Form */}
@@ -344,7 +440,7 @@ export default function WebsiteWorkshopApp() {
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
                     placeholder="Enter your full name"
-                    className="w-full bg-white/60 border border-white focus:border-blue-900/30 focus:bg-white rounded-2xl text-xs py-3.5 px-5 outline-none transition-all shadow-sm placeholder-black/30 text-black font-medium"
+                    className="w-full bg-white/60 border border-white focus:border-blue-900/30 focus:bg-white rounded-2xl text-sm py-3.5 px-5 outline-none transition-all shadow-sm placeholder-black/30 text-black font-medium"
                   />
                 </div>
                 <div>
@@ -354,7 +450,7 @@ export default function WebsiteWorkshopApp() {
                     value={userEmail}
                     onChange={(e) => setUserEmail(e.target.value)}
                     placeholder="you@company.com"
-                    className="w-full bg-white/60 border border-white focus:border-blue-900/30 focus:bg-white rounded-2xl text-xs py-3.5 px-5 outline-none transition-all shadow-sm placeholder-black/30 text-black font-medium"
+                    className="w-full bg-white/60 border border-white focus:border-blue-900/30 focus:bg-white rounded-2xl text-sm py-3.5 px-5 outline-none transition-all shadow-sm placeholder-black/30 text-black font-medium"
                   />
                 </div>
               </div>
@@ -362,23 +458,23 @@ export default function WebsiteWorkshopApp() {
               <button 
                 onClick={() => changeStep(1)}
                 disabled={!userName.trim() || !userEmail.includes('@')}
-                className="flex items-center justify-center px-8 py-3.5 bg-gradient-to-r from-blue-950/95 to-emerald-950/95 backdrop-blur-md border border-white/10 text-white rounded-2xl font-medium text-xs hover:opacity-100 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:cursor-not-allowed"
+                className="flex items-center justify-center px-8 py-3.5 bg-gradient-to-r from-blue-950/90 to-emerald-950/90 backdrop-blur-md border border-white/10 text-white rounded-2xl font-medium text-sm hover:opacity-100 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:cursor-not-allowed"
               >
-                Begin Workshop <ArrowRight className="ml-2 w-4 h-4" />
+                Begin UI/UX Diagnostic <ArrowRight className="ml-2 w-4 h-4" />
               </button>
             </div>
           )}
 
-          {/* STEPS 1-15: QUESTIONS */}
+          {/* STEPS 1-11: QUESTIONS */}
           {currentQuestion && (
-            <div className="w-full glass-panel p-8 md:p-12 rounded-[2rem]">
+            <div className="w-full glass-panel p-8 md:p-12 rounded-3xl">
               
               {/* Progress & Tooltip Header */}
               <div className="flex justify-between items-center mb-8 pb-4 border-b border-black/5">
                 <span className="font-medium tracking-widest uppercase text-[10px] text-black/40">Step {String(step).padStart(2, '0')} of {QUESTIONS.length}</span>
                 <button 
                   onClick={() => setShowExplanation(!showExplanation)}
-                  className={`flex items-center gap-1.5 text-[9px] font-semibold uppercase tracking-widest transition-colors px-3 py-1.5 rounded-full ${showExplanation ? 'bg-black text-white' : 'bg-black/5 text-black/50 hover:bg-black/10'}`}
+                  className={`flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest transition-colors px-3 py-1.5 rounded-full ${showExplanation ? 'bg-black text-white' : 'bg-black/5 text-black/50 hover:bg-black/10'}`}
                 >
                   <Info className="w-3 h-3" /> {showExplanation ? 'Close' : 'Why ask this?'}
                 </button>
@@ -387,7 +483,7 @@ export default function WebsiteWorkshopApp() {
               {/* Tooltip Explanation Box */}
               {showExplanation && (
                 <div className="mb-6 p-4 bg-blue-50 border border-blue-100 rounded-xl text-xs text-blue-900 leading-relaxed font-medium shadow-inner animate-in fade-in slide-in-from-top-2">
-                  <span className="font-bold mr-1">Insight:</span> {currentQuestion.explanation}
+                  <span className="font-bold mr-1">Architecture Insight:</span> {currentQuestion.explanation}
                 </div>
               )}
 
@@ -395,14 +491,14 @@ export default function WebsiteWorkshopApp() {
                 {currentQuestion.text}
               </h2>
 
-              {currentQuestion.type === 'text' ? (
+              {currentQuestion.type === 'text' && (
                 <div className="flex flex-col gap-6">
                   <input 
                     type="text"
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={(e) => handleKeyDown(e, currentQuestion.id)}
-                    placeholder="Type your answer here..."
+                    placeholder="Type your core message..."
                     className="w-full bg-white/60 border border-white rounded-2xl text-sm py-4 px-5 focus:border-blue-900/30 focus:bg-white outline-none shadow-sm placeholder-black/20 font-medium transition-all"
                     autoFocus
                   />
@@ -416,13 +512,15 @@ export default function WebsiteWorkshopApp() {
                     <button 
                       onClick={() => handleTextSubmit(currentQuestion.id)}
                       disabled={!inputValue.trim()}
-                      className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-950/95 to-emerald-950/95 text-white border border-white/10 rounded-2xl font-medium text-xs disabled:opacity-30 hover:opacity-100 hover:shadow-md transition-all"
+                      className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-950/90 to-emerald-950/90 text-white border border-white/10 rounded-2xl font-medium text-xs disabled:opacity-30 hover:opacity-100 hover:shadow-md transition-all"
                     >
-                      Next <ArrowRight className="ml-2 w-3 h-3" />
+                      Finalize Strategy <ArrowRight className="ml-2 w-3 h-3" />
                     </button>
                   </div>
                 </div>
-              ) : (
+              )}
+
+              {currentQuestion.type === 'choice' && (
                 <div className="flex flex-col gap-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {currentQuestion.options.map((opt, idx) => (
@@ -431,7 +529,7 @@ export default function WebsiteWorkshopApp() {
                         onClick={() => handleChoice(currentQuestion.id, opt)}
                         className={`text-left p-4 rounded-2xl border font-medium text-xs transition-all duration-200 flex justify-between items-center group
                           ${answers[currentQuestion.id] === opt 
-                            ? 'bg-gradient-to-r from-blue-950/95 to-emerald-950/95 border-white/10 text-white shadow-md' 
+                            ? 'bg-gradient-to-r from-blue-950/90 to-emerald-950/90 border-white/10 text-white shadow-md' 
                             : 'bg-white/60 border-white text-black/70 hover:bg-white hover:shadow-sm'}`}
                       >
                         <span>{opt}</span>
@@ -449,18 +547,60 @@ export default function WebsiteWorkshopApp() {
                   </div>
                 </div>
               )}
+
+              {currentQuestion.type === 'ranking' && (
+                <div className="flex flex-col gap-4">
+                  <p className="text-xs text-black/50 font-medium mb-2">Select exactly 3 options in order of priority (1st, 2nd, 3rd).</p>
+                  <div className="grid grid-cols-1 gap-3">
+                    {currentQuestion.options.map((opt, idx) => {
+                      const rankIndex = rankingState.indexOf(opt);
+                      const isSelected = rankIndex !== -1;
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => handleRankingChoice(currentQuestion.id, opt)}
+                          className={`text-left p-4 rounded-2xl border font-medium text-xs transition-all duration-200 flex items-center group
+                            ${isSelected
+                              ? 'bg-gradient-to-r from-blue-950/90 to-emerald-950/90 border-white/10 text-white shadow-md' 
+                              : 'bg-white/60 border-white text-black/70 hover:bg-white hover:shadow-sm'}`}
+                        >
+                          <div className={`w-6 h-6 rounded-full flex items-center justify-center mr-3 text-[10px] font-bold border transition-all ${isSelected ? 'bg-white text-blue-950 border-white' : 'bg-transparent border-black/20 text-black/30'}`}>
+                            {isSelected ? rankIndex + 1 : ''}
+                          </div>
+                          <span>{opt}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="flex justify-between items-center mt-6">
+                    <button 
+                      onClick={() => changeStep(step - 1)}
+                      className="flex items-center text-[10px] font-semibold uppercase tracking-widest text-black/40 hover:text-black transition-colors"
+                    >
+                      <ArrowLeft className="mr-2 w-3 h-3" /> Back
+                    </button>
+                    <button 
+                      onClick={() => submitRanking(currentQuestion.id)}
+                      disabled={rankingState.length !== 3}
+                      className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-950/90 to-emerald-950/90 text-white border border-white/10 rounded-2xl font-medium text-xs disabled:opacity-30 hover:opacity-100 hover:shadow-md transition-all"
+                    >
+                      Next <ArrowRight className="ml-2 w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
-          {/* STEP 16: SUMMARY / DATA EXPORT */}
+          {/* STEP 12: SUMMARY / DATA EXPORT */}
           {step === QUESTIONS.length + 1 && (
             <div className="w-full">
-              <div className="glass-panel rounded-[2rem] p-8 md:p-12 relative overflow-hidden">
+              <div className="glass-panel rounded-3xl p-8 md:p-12 relative overflow-hidden">
                 
                 {/* Header for Summary */}
                 <div className="mb-6 border-b border-black/5 pb-4 flex justify-between items-end">
                   <div>
-                    <h2 className="text-2xl font-semibold tracking-tight text-black mb-1">Brand Blueprint</h2>
+                    <h2 className="text-2xl font-semibold tracking-tight text-black mb-1">Architecture Blueprint</h2>
                     <p className="text-[10px] text-black/50 uppercase tracking-widest font-medium">Review & Export Strategy</p>
                   </div>
                   
@@ -484,19 +624,26 @@ export default function WebsiteWorkshopApp() {
                   </div>
                 </div>
 
-                {/* AI Executive Summary Box */}
+                {/* AI UX Strategy Summary Box */}
                 <div className="mb-8 bg-gradient-to-br from-blue-50/80 to-emerald-50/80 border border-blue-900/10 rounded-2xl p-5 relative shadow-inner">
                   <div className="flex items-center gap-2 mb-3">
                     <Sparkles className="w-4 h-4 text-blue-900" />
-                    <h3 className="text-[10px] font-semibold text-blue-900 uppercase tracking-widest">AI Brand Summary</h3>
+                    <h3 className="text-[10px] font-semibold text-blue-900 uppercase tracking-widest">AI UX/UI Strategy Analysis</h3>
                   </div>
                   {isGeneratingSummary ? (
-                    <div className="flex items-center gap-3 text-xs text-black/50 font-medium py-4">
-                      <div className="w-4 h-4 border-2 border-black/20 border-t-blue-900 rounded-full animate-spin"></div>
-                      Synthesizing strategic brand architecture...
+                    <div className="flex flex-col gap-3">
+                       <div className="flex items-center gap-3 text-xs text-black/50 font-medium py-2">
+                        <div className="w-4 h-4 border-2 border-black/20 border-t-blue-900 rounded-full animate-spin"></div>
+                        Synthesizing website architecture & user journey...
+                      </div>
+                      <div className="space-y-2 opacity-40">
+                         <div className="h-2 bg-blue-900/20 rounded w-full animate-pulse"></div>
+                         <div className="h-2 bg-blue-900/20 rounded w-5/6 animate-pulse"></div>
+                         <div className="h-2 bg-blue-900/20 rounded w-4/6 animate-pulse"></div>
+                      </div>
                     </div>
                   ) : (
-                    <div className="text-xs text-black/80 leading-relaxed font-medium space-y-3 whitespace-pre-wrap">
+                    <div className="text-xs text-black/80 leading-relaxed font-medium space-y-4 whitespace-pre-wrap">
                       {aiSummary}
                     </div>
                   )}
@@ -504,18 +651,25 @@ export default function WebsiteWorkshopApp() {
 
                 {/* Responses List (Scrollable Area) */}
                 <div className="mb-8 max-h-[300px] overflow-y-auto custom-scroll pr-3 space-y-3">
-                  <h3 className="text-[10px] font-semibold text-black uppercase tracking-widest mb-3 sticky top-0 bg-white/80 backdrop-blur pt-1 pb-2 z-10">Workshop Data Log</h3>
-                  {QUESTIONS.map((q, idx) => (
-                    <div key={q.id} className="bg-white/50 rounded-xl p-4 border border-white shadow-sm hover:shadow-md transition-shadow">
-                      <div className="text-[9px] font-semibold text-black/40 uppercase tracking-wider mb-1.5 flex gap-2">
-                        <span>{String(idx + 1).padStart(2, '0')}.</span>
-                        <span>{q.text}</span>
+                  <h3 className="text-[10px] font-semibold text-black uppercase tracking-widest mb-3 sticky top-0 bg-white/80 backdrop-blur pt-1 pb-2 z-10">Diagnostic Data Log</h3>
+                  {QUESTIONS.map((q, idx) => {
+                    let ansText = answers[q.id] || "—";
+                    if (Array.isArray(ansText)) {
+                      ansText = `1st: ${ansText[0]} | 2nd: ${ansText[1]} | 3rd: ${ansText[2]}`;
+                    }
+
+                    return (
+                      <div key={q.id} className="bg-white/50 rounded-xl p-4 border border-white shadow-sm hover:shadow-md transition-shadow">
+                        <div className="text-[9px] font-semibold text-black/40 uppercase tracking-wider mb-1.5 flex gap-2">
+                          <span>{String(idx + 1).padStart(2, '0')}.</span>
+                          <span>{q.text}</span>
+                        </div>
+                        <div className="text-xs font-semibold text-black">
+                          {ansText}
+                        </div>
                       </div>
-                      <div className="text-xs font-semibold text-black">
-                        {answers[q.id] || "—"}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {/* Action Buttons */}
@@ -523,17 +677,18 @@ export default function WebsiteWorkshopApp() {
                   <button 
                     onClick={exportPDF}
                     disabled={isGeneratingPDF || isGeneratingSummary}
-                    className="flex-1 flex items-center justify-center px-6 py-3.5 bg-gradient-to-r from-blue-950/95 to-emerald-950/95 text-white border border-white/10 rounded-2xl font-medium text-xs hover:opacity-100 hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+                    className="flex-1 flex items-center justify-center px-6 py-3.5 bg-gradient-to-r from-blue-950/90 to-emerald-950/90 text-white border border-white/10 rounded-2xl font-medium text-xs hover:opacity-100 hover:shadow-lg transition-all duration-300 disabled:opacity-50"
                   >
                     {isGeneratingPDF ? (
-                      <span className="animate-pulse">Generating PDF...</span>
+                      <span className="animate-pulse">Generating Brief...</span>
                     ) : (
-                      <><Download className="mr-2 w-4 h-4" /> Export as PDF</>
+                      <><Download className="mr-2 w-4 h-4" /> Export Architecture Brief</>
                     )}
                   </button>
                   <button 
                     onClick={() => {
                       setAnswers({});
+                      setRankingState([]);
                       setAiSummary(null);
                       setUserName('');
                       setUserEmail('');
@@ -542,7 +697,7 @@ export default function WebsiteWorkshopApp() {
                     }}
                     className="flex-1 flex items-center justify-center px-6 py-3.5 bg-white/60 backdrop-blur-sm border border-white text-black/70 rounded-2xl font-medium text-xs hover:bg-white hover:text-black hover:shadow-sm transition-all duration-300"
                   >
-                    <RefreshCcw className="mr-2 w-4 h-4" /> Reset Workshop
+                    <RefreshCcw className="mr-2 w-4 h-4" /> Restart Diagnostic
                   </button>
                 </div>
               </div>
@@ -553,8 +708,8 @@ export default function WebsiteWorkshopApp() {
       </div>
 
       {/* Footer - Fixed Bottom */}
-      <footer className="w-full px-8 py-4 flex items-center justify-center bg-gradient-to-r from-blue-950 to-emerald-950 text-white/80 text-[9px] tracking-[0.2em] uppercase font-semibold z-20 flex-shrink-0">
-         PurpleBlue House © 2026 | Website Design Strategy Workshop
+      <footer className="w-full px-8 py-4 flex items-center justify-center bg-gradient-to-r from-blue-950 to-emerald-950 text-white/80 text-[9px] tracking-[0.2em] uppercase font-semibold z-20 flex-shrink-0 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
+         NetZero India Foundation © 2026 | Website Strategy & Architecture Diagnostic
       </footer>
       
     </div>

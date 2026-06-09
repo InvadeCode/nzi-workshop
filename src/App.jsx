@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, ArrowLeft, Check, RefreshCcw, Download, Info, Globe, Sparkles, CloudOff, CheckCircle } from 'lucide-react';
-import jsPDF from 'jspdf';
 
 // --- Supabase Configuration ---
-const SUPABASE_URL = 'https://rhcqnhlrpbmrvjtibpad.supabase.co';
-const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJoY3FuaGxycGJtcnZqdGlicGFkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MDk4NDU4OCwiZXhwIjoyMDk2NTYwNTg4fQ.ux2ecObayJTpBf2F3PWLAw9yDjGxEnnLAU7uh2zKyKI';
+const SUPABASE_URL = import.meta.env?.VITE_SUPABASE_URL;
+const SUPABASE_SERVICE_KEY = import.meta.env?.VITE_SUPABASE_SERVICE_KEY;
 
 // --- Workshop Data (Mapped from PurpleBlue House PDF) ---
 const QUESTIONS = [
@@ -165,8 +164,9 @@ export default function WebsiteWorkshopApp() {
   const exportPDF = () => {
     setIsGeneratingPDF(true);
     
-    setTimeout(() => {
+    const generate = () => {
       try {
+        const { jsPDF } = window.jspdf;
         const pdf = new jsPDF({
           orientation: 'portrait',
           unit: 'in',
@@ -251,7 +251,17 @@ export default function WebsiteWorkshopApp() {
       } finally {
         setIsGeneratingPDF(false);
       }
-    }, 100); 
+    };
+
+    // Dynamically load jsPDF from CDN
+    if (!window.jspdf) {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      script.onload = generate;
+      document.head.appendChild(script);
+    } else {
+      generate();
+    }
   };
 
   const currentQuestion = step > 0 && step <= QUESTIONS.length ? QUESTIONS[step - 1] : null;
@@ -316,10 +326,10 @@ export default function WebsiteWorkshopApp() {
           {step === 0 && (
             <div className="w-full text-center flex flex-col items-center glass-panel p-10 md:p-16 rounded-[2rem]">
               <div className="inline-block border border-black/10 bg-black/5 px-4 py-1.5 mb-6 rounded-full text-[9px] font-semibold tracking-widest uppercase">
-                Phase 3: Brand Identity
+                Phase 3: Website Identity & Design
               </div>
               <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-black">
-                Brand Strategy Workshop
+                Website Identity & Design Workshop
               </h2>
               <p className="text-xs text-black/60 mb-10 max-w-sm mx-auto leading-relaxed font-normal">
                 A 15-step interactive diagnostic to define the precise role, audience, and archetype for the NetZero India identity.
@@ -544,7 +554,7 @@ export default function WebsiteWorkshopApp() {
 
       {/* Footer - Fixed Bottom */}
       <footer className="w-full px-8 py-4 flex items-center justify-center bg-gradient-to-r from-blue-950 to-emerald-950 text-white/80 text-[9px] tracking-[0.2em] uppercase font-semibold z-20 flex-shrink-0">
-         PurpleBlue House © 2026 | Brand Strategy Workshop
+         PurpleBlue House © 2026 | Website Design Strategy Workshop
       </footer>
       
     </div>

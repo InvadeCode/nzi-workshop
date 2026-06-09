@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { ArrowRight, ArrowLeft, Check, RefreshCcw, Download, Info, Globe, Sparkles, CloudOff, CheckCircle } from 'lucide-react';
 
 // --- Supabase Configuration ---
-//const SUPABASE_URL = import.meta.env?.VITE_SUPABASE_URL;
-//const SUPABASE_SERVICE_KEY = import.meta.env?.VITE_SUPABASE_SERVICE_KEY;
+const SUPABASE_URL = import.meta.env?.VITE_SUPABASE_URL;
+const SUPABASE_SERVICE_KEY = import.meta.env?.VITE_SUPABASE_SERVICE_KEY;
 
 // --- Website Strategy Workshop Data ---
 const QUESTIONS = [

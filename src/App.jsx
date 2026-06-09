@@ -1,82 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, ArrowLeft, Check, RefreshCcw, Download, Globe, Info, Loader2, Sparkles } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check, RefreshCcw, Download, Info, Globe, Sparkles, CloudOff, CheckCircle } from 'lucide-react';
+import jsPDF from 'jspdf';
 
-// --- Website UI/UX Strategy Workshop Data ---
+// --- Supabase Configuration ---
+const SUPABASE_URL = 'https://rhcqnhlrpbmrvjtibpad.supabase.co';
+const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJoY3FuaGxycGJtcnZqdGlicGFkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MDk4NDU4OCwiZXhwIjoyMDk2NTYwNTg4fQ.ux2ecObayJTpBf2F3PWLAw9yDjGxEnnLAU7uh2zKyKI';
+
+// --- Workshop Data (Mapped from PurpleBlue House PDF) ---
 const QUESTIONS = [
-  { 
-    id: 'q1', type: 'choice', text: "What is the primary function of the new NZI website?", 
-    options: ["Public Awareness & Storytelling", "Dense Policy & Academic Hub", "Interactive Data Dashboard", "Action & Community Engagement"],
-    why: "This dictates the core architecture. A storytelling site needs large visuals and scroll-based narratives, whereas an academic hub requires robust search, categorization, and text-heavy layouts."
-  },
-  { 
-    id: 'q2', type: 'choice', text: "Who is the primary user persona visiting the site?", 
-    options: ["Government Policymakers", "Academic Researchers", "Corporate Leaders", "The General Public"],
-    why: "Understanding the primary audience determines the reading level, the terminology used, and the complexity of the navigation."
-  },
-  { 
-    id: 'q3', type: 'choice', text: "Which visual aesthetic best aligns with NZI's digital future?", 
-    options: ["Minimalist & Data-Driven (Lots of white space)", "Earthy & Organic (Nature tones, textures)", "Bold & Brutalist (High contrast, large typography)", "High-Tech & Futuristic (Dark modes, neon accents)"],
-    why: "This sets the fundamental art direction for UI components, color palettes, and spacing, ensuring the brand's emotion matches its visual output."
-  },
-  { 
-    id: 'q4', type: 'choice', text: "How should we present complex climate and policy data?", 
-    options: ["Interactive, clickable dashboards", "Simple, scannable infographics", "Downloadable PDF reports", "Long-form academic articles"],
-    why: "Data visualization requires specific technical investments. Knowing this upfront decides whether we need charting libraries, illustrators, or simply a good document management system."
-  },
-  { 
-    id: 'q5', type: 'choice', text: "What is the most critical element on the homepage?", 
-    options: ["A powerful hero video or image", "Live progress trackers / statistics", "Latest research and publications", "Clear 'Take Action' pathways"],
-    why: "The homepage hero section gets 80% of a user's attention. This choice defines the first 3 seconds of the user experience and what we prioritize loading first."
-  },
-  { 
-    id: 'q6', type: 'choice', text: "What is the preferred style of photography and imagery?", 
-    options: ["Real people and grassroots communities", "High-tech infrastructure and clean energy", "Abstract data visualizations", "Vast natural landscapes"],
-    why: "Photography defines the 'soul' of the site. It tells us whether we need to schedule field photoshoots or rely on technical renderings and data art."
-  },
-  { 
-    id: 'q7', type: 'choice', text: "How should the website's tone of voice read?", 
-    options: ["Academic, formal, and authoritative", "Urgent, direct, and action-oriented", "Inspiring, visionary, and hopeful", "Accessible, simple, and conversational"],
-    why: "This directly impacts the UX copywriting. Buttons, headings, and error messages will all be adapted to match this specific tone."
-  },
-  { 
-    id: 'q8', type: 'choice', text: "What is the primary Call-To-Action (CTA) for visitors?", 
-    options: ["Read our latest policy brief", "Join the NetZero network/newsletter", "Explore the data portal", "Contact us for partnerships"],
-    why: "Every website needs a funnel. Knowing the primary CTA ensures we design pathways that guide users toward this specific action from every page."
-  },
-  { 
-    id: 'q9', type: 'choice', text: "How should the website navigation be structured?", 
-    options: ["Traditional top menu (Simple, visible)", "Mega-menu (Detailed, categorised dropdowns)", "Hidden hamburger menu (Clean, app-like)", "Sticky sidebar (Always accessible)"],
-    why: "Navigation is the skeleton of UX. A mega-menu suggests high content volume, while a hamburger menu suggests a mobile-first, minimalist approach."
-  },
-  { 
-    id: 'q10', type: 'choice', text: "What is our approach to device optimization?", 
-    options: ["Mobile-first (For public accessibility)", "Desktop-first (For complex data reading)", "Equally balanced across all devices"],
-    why: "While everything will be responsive, deciding the 'first' priority determines where we spend the most time perfecting micro-interactions and layouts."
-  },
-  { 
-    id: 'q11', type: 'choice', text: "How should we highlight NZI's partnerships and legacy?", 
-    options: ["A dedicated 'History & Partners' page", "A scrolling logo ticker on the homepage", "Integrated into case studies and stories", "Minimal focus; keep it about the future"],
-    why: "This determines how much space is allocated to institutional credibility versus forward-looking actions and future projects."
-  },
-  { 
-    id: 'q12', type: 'choice', text: "What interactive features are necessary for engagement?", 
-    options: ["Carbon calculators or assessment tools", "Interactive maps of India's progress", "Discussion forums or comment sections", "No interactions; purely informational"],
-    why: "Interactive features require backend development and databases. This helps scope the technical complexity of the website build."
-  },
-  { 
-    id: 'q13', type: 'choice', text: "What is the priority for website performance?", 
-    options: ["Ultra-fast loading (Low bandwidth optimized)", "High-end animations (Premium experience)", "Strict accessibility compliance (Screen readers)"],
-    why: "We cannot have ultra-heavy 3D animations and ultra-fast low-bandwidth loading simultaneously. This sets the technical constraints for the developers."
-  },
-  { 
-    id: 'q14', type: 'choice', text: "How frequently will the website content be updated?", 
-    options: ["Daily (News, live stats)", "Weekly (Blogs, articles)", "Monthly (New reports, case studies)", "Rarely (Static informational brochure)"],
-    why: "This dictates the choice of Content Management System (CMS). Daily updates require a highly flexible CMS, while rare updates might allow for a faster, static site."
-  },
-  { 
-    id: 'q15', type: 'text', text: "In one sentence, what exactly should a user feel or remember right after closing the website?",
-    why: "This is the ultimate benchmark for success. All design, copy, and structural decisions will be measured against whether they evoke this specific feeling."
-  }
+  { id: 'q1', type: 'text', text: "Let's imagine India in 2070. Write one headline you would like to read about India in 2070.", explanation: "Forces us to think about the ultimate end-goal and real-world impact of the initiative." },
+  { id: 'q2', type: 'text', text: "Where does NZI sit in this future? What part did it play?", explanation: "Clarifies NZI's specific contribution to that ideal future." },
+  { id: 'q3', type: 'text', text: "Write 3 adjectives that describe the brand's essence in the future.", explanation: "Distills the brand's personality into its simplest, most memorable form." },
+  { id: 'q4', type: 'text', text: "Meet the Person: Who are we building this for? (Describe their role, city, and what they seek from NZI)", explanation: "Ensures the brand is speaking to a specific, real person rather than a generic crowd." },
+  { id: 'q5', type: 'text', text: "Fill in the blank: Without NZI, India would struggle to...", explanation: "Defines the brand's core utility and what is at stake if it fails." },
+  { id: 'q6', type: 'text', text: "What are the 5 touchpoints that matter the most for people experiencing NZI?", explanation: "Identifies where the brand actually lives in the real world (website, reports, events, etc)." },
+  { id: 'q7', type: 'choice', text: "If NZI were a person, which personality aligns best? (Round 1)", options: ["Mukesh Ambani (Authoritative, strategic)", "Bear Grylls (Adventurous, risk-taking)", "None of the above"], explanation: "Uses familiar personalities to quickly align on complex behavioral traits." },
+  { id: 'q8', type: 'choice', text: "If NZI were a person, which personality aligns best? (Round 2)", options: ["Steve Jobs (Innovative, perfectionist)", "Lata Mangeshkar (Pure, emotionally uplifting)", "None of the above"], explanation: "Uses familiar personalities to quickly align on complex behavioral traits." },
+  { id: 'q9', type: 'choice', text: "If NZI were a person, which personality aligns best? (Round 3)", options: ["A.P.J. Abdul Kalam (Wise, guiding)", "Sudha Murty (Compassionate, nurturing)", "None of the above"], explanation: "Uses familiar personalities to quickly align on complex behavioral traits." },
+  { id: 'q10', type: 'choice', text: "If NZI were a person, which personality aligns best? (Round 4)", options: ["Bhagat Singh (Disruptive, bold)", "Walt Disney (Imaginative, visionary)", "None of the above"], explanation: "Uses familiar personalities to quickly align on complex behavioral traits." },
+  { id: 'q11', type: 'choice', text: "If NZI were a person, which personality aligns best? (Round 5)", options: ["Johny Lever (Playful, witty)", "Ratan Tata (Humble, relatable)", "None of the above"], explanation: "Uses familiar personalities to quickly align on complex behavioral traits." },
+  { id: 'q12', type: 'choice', text: "Based on the personalities, which primary Brand Archetype should NZI adopt?", options: ["The Ruler (Authority, Legacy)", "The Sage (Knowledge, Strategy)", "The Hero (Courageous, Mission-driven)", "The Outlaw (Disruptive, Bold)"], explanation: "Assigns a globally recognized psychological archetype to guide all future messaging and design." },
+  { id: 'q13', type: 'choice', text: "Which SDG area must India prioritise most strongly over the next 50 years?", options: ["Affordable & Clean Energy", "Sustainable Cities & Communities", "Industry, Innovation & Infrastructure", "Climate Action"], explanation: "Connects the brand's mission to actionable, globally recognized sustainability goals." },
+  { id: 'q14', type: 'choice', text: "Where does NZI sit on the positioning matrix?", options: ["Legacy & Heritage", "Disruptive Innovation", "Intellectual & Functional Authority", "Cultural Resonance"], explanation: "Plots the brand against competitors to find a unique, ownable white space in the market." },
+  { id: 'q15', type: 'text', text: "What are 5 emotions people should instantly recognise and associate with NZI as a brand?", explanation: "Defines the immediate gut-reaction the brand should evoke when encountered." }
 ];
 
 export default function WebsiteWorkshopApp() {
@@ -86,12 +32,19 @@ export default function WebsiteWorkshopApp() {
   const [animateState, setAnimateState] = useState('enter'); 
   const [showExplanation, setShowExplanation] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  
+  // User Details
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+
+  // AI & Cloud States
   const [aiSummary, setAiSummary] = useState(null);
   const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
+  const [syncStatus, setSyncStatus] = useState('idle'); // idle, saving, success, error
 
   const changeStep = (newStep) => {
     setAnimateState('exit');
-    setShowExplanation(false); // Reset explanation on step change
+    setShowExplanation(false);
     setTimeout(() => {
       setStep(newStep);
       setAnimateState('enter');
@@ -101,7 +54,7 @@ export default function WebsiteWorkshopApp() {
           setInputValue(answers[q.id] || '');
         }
       }
-    }, 300);
+    }, 400); 
   };
 
   useEffect(() => {
@@ -110,104 +63,6 @@ export default function WebsiteWorkshopApp() {
       return () => clearTimeout(timer);
     }
   }, [animateState, step]);
-
-  useEffect(() => {
-    if (step === QUESTIONS.length + 1 && !aiSummary && !isGeneratingSummary) {
-      generateAISummary();
-    }
-  }, [step]);
-
-  const generateAISummary = async () => {
-    setIsGeneratingSummary(true);
-    try {
-      const qaText = QUESTIONS.map(q => `Q: ${q.text}\nA: ${answers[q.id] || 'Not answered'}`).join('\n\n');
-      const systemPrompt = "Act as an expert digital strategist and UX architect. Provide a concise, 2-paragraph executive summary outlining the website architecture, user experience, and visual direction based on the user's workshop answers. DO NOT use markdown like asterisks for bolding. Use plain text paragraphs only.";
-      const userPrompt = `Based on the following answers from a website strategy workshop for 'NetZero India', provide the executive summary.\n\nWorkshop Data:\n${qaText}`;
-      
-      const payload = {
-        contents: [{ parts: [{ text: userPrompt }] }],
-        systemInstruction: { parts: [{ text: systemPrompt }] }
-      };
-
-      const apiKey = import.meta.env?.VITE_GEMINI_API_KEY || "";
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const result = await response.json();
-      const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (text) {
-        setAiSummary(text);
-      } else {
-        setAiSummary("Summary generation completed with no text.");
-      }
-    } catch (e) {
-      console.error(e);
-      setAiSummary("An error occurred while generating the AI summary.");
-    } finally {
-      setIsGeneratingSummary(false);
-    }
-  };
-
-  const generatePDF = async () => {
-    setIsGeneratingPDF(true);
-    
-    // Dynamically load html2pdf.js
-    if (!window.html2pdf) {
-      const script = document.createElement('script');
-      script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
-      document.body.appendChild(script);
-      await new Promise(resolve => script.onload = resolve);
-    }
-
-    // Target our dedicated, clean print container instead of the UI view
-    const element = document.getElementById('print-container');
-    
-    const opt = {
-      margin:       [0.8, 0.5, 0.8, 0.5], // [Top, Left, Bottom, Right] in inches
-      filename:     'NetZero_Website_Blueprint.pdf',
-      image:        { type: 'jpeg', quality: 1 },
-      html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff', letterRendering: true },
-      jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' },
-      pagebreak:    { mode: 'avoid-all', inside: 'avoid' } // Prevent breaking inside items
-    };
-
-    window.html2pdf()
-      .set(opt)
-      .from(element)
-      .toPdf()
-      .get('pdf')
-      .then(function (pdf) {
-        // Inject Custom Headers and Footers on every page
-        const totalPages = pdf.internal.getNumberOfPages();
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
-
-        for (let i = 1; i <= totalPages; i++) {
-          pdf.setPage(i);
-
-          // Custom Header
-          pdf.setFontSize(10);
-          pdf.setTextColor(80, 80, 80);
-          pdf.text('NetZero India | Website Architecture Blueprint', 0.5, 0.4);
-          pdf.setDrawColor(200, 200, 200);
-          pdf.setLineWidth(0.01);
-          pdf.line(0.5, 0.48, pageWidth - 0.5, 0.48);
-
-          // Custom Footer
-          pdf.line(0.5, pageHeight - 0.48, pageWidth - 0.5, pageHeight - 0.48);
-          pdf.setFontSize(8);
-          pdf.setTextColor(120, 120, 120);
-          pdf.text('Prepared by PurpleBlue House', 0.5, pageHeight - 0.35);
-          pdf.text(`Page ${i} of ${totalPages}`, pageWidth - 0.9, pageHeight - 0.35);
-        }
-      })
-      .save()
-      .then(() => {
-        setIsGeneratingPDF(false);
-      });
-  };
 
   const handleChoice = (questionId, option) => {
     setAnswers(prev => ({ ...prev, [questionId]: option }));
@@ -227,128 +82,308 @@ export default function WebsiteWorkshopApp() {
     }
   };
 
+  const saveToSupabase = async (finalSummary) => {
+    setSyncStatus('saving');
+    try {
+      const payload = {
+        user_name: userName,
+        user_email: userEmail,
+        answers: answers,
+        ai_summary: finalSummary
+      };
+
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/workshop_responses`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_SERVICE_KEY,
+          'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Supabase Error: ${response.status} - ${errorText}`);
+      }
+      
+      setSyncStatus('success');
+    } catch (error) {
+      console.error("Supabase Save Error:", error);
+      setSyncStatus('error');
+    }
+  };
+
+  const generateAISummary = async () => {
+    setIsGeneratingSummary(true);
+    let generatedText = "";
+    try {
+      const apiKey = import.meta.env?.VITE_GEMINI_API_KEY || "";
+      const qaText = QUESTIONS.map(q => `Q: ${q.text}\nA: ${answers[q.id] || 'Not answered'}`).join('\n\n');
+      const systemPrompt = "Act as an expert brand strategist from PurpleBlue House. Provide a concise, 2-paragraph executive summary outlining the brand's future vision, archetype, and positioning strategy based on the user's workshop answers. DO NOT use markdown like asterisks for bolding. Use plain text paragraphs only.";
+      const userPrompt = `Workshop Participant: ${userName} (${userEmail})\n\nBased on the following answers from the PurpleBlue House Branding Workshop for 'NetZero India', provide the executive brand summary.\n\nWorkshop Data:\n${qaText}`;
+      
+      if (!apiKey) {
+        generatedText = "API Key not found in environment variables. Based on the selected parameters, the NetZero India platform should prioritize a clear, authoritative architecture that aligns perfectly with the chosen archetype, audience, and functional goals.";
+      } else {
+        const payload = {
+          contents: [{ parts: [{ text: systemPrompt + "\n\n" + userPrompt }] }],
+          generationConfig: { temperature: 0.7, maxOutputTokens: 500 }
+        };
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        if (data.candidates && data.candidates[0]) {
+          generatedText = data.candidates[0].content.parts[0].text;
+        } else {
+          generatedText = "Summary generation completed with default strategic parameters.";
+        }
+      }
+    } catch (error) {
+      console.error("AI Generation Error:", error);
+      generatedText = "An error occurred while generating the AI summary. Please proceed with the manual export.";
+    } finally {
+      setAiSummary(generatedText);
+      setIsGeneratingSummary(false);
+      // Fire off to Supabase once AI is done
+      saveToSupabase(generatedText);
+    }
+  };
+
+  useEffect(() => {
+    if (step === QUESTIONS.length + 1 && !aiSummary && !isGeneratingSummary) {
+      generateAISummary();
+    }
+  }, [step]);
+
+  const exportPDF = () => {
+    setIsGeneratingPDF(true);
+    
+    setTimeout(() => {
+      try {
+        const pdf = new jsPDF({
+          orientation: 'portrait',
+          unit: 'in',
+          format: 'letter'
+        });
+
+        const margin = 0.75;
+        const pageWidth = 8.5;
+        const pageHeight = 11;
+        const contentWidth = pageWidth - (margin * 2);
+        let currentY = margin;
+
+        const addHeaderFooter = (pageNumber) => {
+          pdf.setFontSize(10);
+          pdf.setTextColor(80, 80, 80);
+          pdf.text('NetZero India | PurpleBlue House Branding Workshop', margin, 0.4);
+          pdf.setFontSize(8);
+          pdf.text(`Participant: ${userName}`, margin, 0.55);
+          pdf.setDrawColor(200, 200, 200);
+          pdf.setLineWidth(0.01);
+          pdf.line(margin, 0.65, pageWidth - margin, 0.65);
+          pdf.text(`Page ${pageNumber}`, pageWidth - margin - 0.3, pageHeight - 0.4);
+        };
+
+        pdf.setFont("helvetica");
+        addHeaderFooter(1);
+        currentY = 1.0;
+
+        pdf.setFontSize(22);
+        pdf.setTextColor(0, 0, 0);
+        pdf.text('Brand Strategy Blueprint', margin, currentY);
+        currentY += 0.4;
+
+        if (aiSummary) {
+          pdf.setFontSize(10);
+          pdf.setTextColor(0, 100, 0);
+          pdf.text('AI EXECUTIVE SUMMARY', margin, currentY);
+          currentY += 0.2;
+          
+          pdf.setFontSize(10);
+          pdf.setTextColor(50, 50, 50);
+          const splitSummary = pdf.splitTextToSize(aiSummary, contentWidth);
+          pdf.text(splitSummary, margin, currentY);
+          currentY += (splitSummary.length * 0.2) + 0.3;
+        }
+
+        pdf.setDrawColor(0, 0, 0);
+        pdf.setLineWidth(0.02);
+        pdf.line(margin, currentY, pageWidth - margin, currentY);
+        currentY += 0.4;
+
+        QUESTIONS.forEach((q, idx) => {
+          if (currentY > pageHeight - 1.5) {
+            pdf.addPage();
+            addHeaderFooter(pdf.internal.getNumberOfPages());
+            currentY = 1.0;
+          }
+
+          pdf.setFontSize(9);
+          pdf.setTextColor(120, 120, 120);
+          const qText = `PARAMETER ${String(idx + 1).padStart(2, '0')}: ${q.text}`;
+          const splitQ = pdf.splitTextToSize(qText, contentWidth);
+          pdf.text(splitQ, margin, currentY);
+          currentY += (splitQ.length * 0.15) + 0.1;
+
+          pdf.setFontSize(11);
+          pdf.setTextColor(0, 0, 0);
+          const ansText = answers[q.id] || "—";
+          const splitA = pdf.splitTextToSize(ansText, contentWidth - 0.2);
+          pdf.text(splitA, margin + 0.2, currentY);
+          
+          pdf.setDrawColor(200, 200, 200);
+          pdf.setLineWidth(0.01);
+          pdf.line(margin, currentY - 0.1, margin, currentY + (splitA.length * 0.18));
+
+          currentY += (splitA.length * 0.2) + 0.3;
+        });
+
+        pdf.save('NZI_Brand_Blueprint.pdf');
+      } catch (err) {
+        console.error("PDF Generation failed", err);
+      } finally {
+        setIsGeneratingPDF(false);
+      }
+    }, 100); 
+  };
+
   const currentQuestion = step > 0 && step <= QUESTIONS.length ? QUESTIONS[step - 1] : null;
 
   return (
-    <div className="min-h-screen w-full flex flex-col relative overflow-hidden bg-slate-50 text-black selection:bg-emerald-950 selection:text-white" style={{ fontFamily: "'Poppins', sans-serif" }}>
+    <div className="h-screen w-full bg-slate-50 text-black overflow-hidden flex flex-col font-sans selection:bg-blue-900 selection:text-white">
       
-      {/* Google Font Import & Animated Grid Style */}
+      {/* Global CSS for Poppins, Glassmorphism, and Animations */}
       <style dangerouslySetInnerHTML={{__html: `
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
         
-        .animated-bg-grid {
-          position: fixed;
+        * { font-family: 'Poppins', sans-serif; }
+
+        .bg-grid {
+          position: absolute;
           inset: -100%;
           background-size: 40px 40px;
           background-image: 
             linear-gradient(to right, rgba(0,0,0,0.03) 1px, transparent 1px),
             linear-gradient(to bottom, rgba(0,0,0,0.03) 1px, transparent 1px);
-          transform-origin: center;
-          animation: slideGrid 30s linear infinite;
           z-index: 0;
           pointer-events: none;
         }
-        @keyframes slideGrid {
-          0% { transform: translate(0, 0); }
-          100% { transform: translate(40px, 40px); }
+
+        .fade-enter { opacity: 0; transform: translateY(15px); }
+        .fade-active { opacity: 1; transform: translateY(0); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .fade-exit { opacity: 0; transform: translateY(-15px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        
+        .glass-panel {
+          background: rgba(255, 255, 255, 0.7);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 1);
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03), inset 0 0 0 1px rgba(255,255,255,0.8);
         }
         
-        /* Smooth Fade Transitions */
-        .fade-enter { opacity: 0; transform: translateY(10px); }
-        .fade-active { opacity: 1; transform: translateY(0); transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
-        .fade-exit { opacity: 0; transform: translateY(-10px); transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
-
-        /* Glassmorphism Utilities */
-        .glass-panel {
-          background: rgba(255, 255, 255, 0.45);
-          backdrop-filter: blur(24px) saturate(150%);
-          -webkit-backdrop-filter: blur(24px) saturate(150%);
-          border: 1px solid rgba(255, 255, 255, 0.7);
-          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-        }
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
       `}} />
       
-      <div className="animated-bg-grid"></div>
+      <div className="bg-grid"></div>
 
-      {/* HEADER */}
-      <header className="relative z-20 w-full px-6 py-4 flex justify-between items-center glass-panel sticky top-0 border-b border-white/50">
+      {/* Header - Fixed Top */}
+      <header className="w-full px-8 py-5 flex items-center justify-between z-20 flex-shrink-0">
         <div className="flex items-center gap-3">
-          <div className="bg-gradient-to-br from-blue-950/90 to-emerald-950/90 backdrop-blur-md border border-white/20 text-white p-2 rounded-xl shadow-sm">
-            <Globe size={18} />
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-950 to-emerald-950 flex items-center justify-center shadow-md">
+            <Globe className="text-white w-4 h-4" />
           </div>
           <div>
-            <h1 className="font-semibold text-sm tracking-wide leading-tight">NetZero India</h1>
-            <p className="text-[10px] text-black/50 font-medium uppercase tracking-widest">Website Strategy UI/UX</p>
+            <h1 className="text-sm font-semibold tracking-tight text-black leading-none">NetZero India</h1>
+            <p className="text-[9px] font-medium text-black/50 uppercase tracking-widest mt-0.5">Brand Strategy</p>
           </div>
         </div>
-        
-        {step > 0 && step <= QUESTIONS.length && (
-          <div className="flex items-center gap-4">
-            <div className="hidden md:block w-32 h-1.5 bg-black/5 rounded-full overflow-hidden inset-shadow-sm">
-              <div 
-                className="h-full bg-gradient-to-r from-blue-950 to-emerald-950 rounded-full transition-all duration-500 ease-out" 
-                style={{ width: `${(step / QUESTIONS.length) * 100}%` }}
-              />
-            </div>
-            <span className="font-medium text-xs text-black/50 bg-black/5 px-3 py-1 rounded-full border border-black/5">
-              {String(step).padStart(2, '0')} / {QUESTIONS.length}
-            </span>
-          </div>
-        )}
       </header>
 
-      {/* MAIN WORKSPACE */}
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-center w-full max-w-3xl mx-auto px-6 py-12">
-        <div className={`w-full transition-all duration-500 ${animateState === 'enter' ? 'fade-enter' : animateState === 'active' ? 'fade-active' : 'fade-exit'}`}>
+      {/* Main Content Area - Scrollable */}
+      <div className="relative z-10 w-full max-w-3xl mx-auto px-6 flex flex-col flex-1 overflow-y-auto custom-scroll pb-12">
+        <div className={`flex flex-col w-full my-auto transition-all duration-500 ${animateState === 'enter' ? 'fade-enter' : animateState === 'active' ? 'fade-active' : 'fade-exit'}`}>
           
           {/* STEP 0: INTRO */}
           {step === 0 && (
-            <div className="w-full text-center flex flex-col items-center glass-panel p-10 md:p-16 rounded-3xl">
-              <div className="inline-block border border-black/10 bg-black/5 px-4 py-1.5 mb-6 rounded-full text-[10px] font-semibold tracking-widest uppercase">
-                Phase 4: Digital Experience
+            <div className="w-full text-center flex flex-col items-center glass-panel p-10 md:p-16 rounded-[2rem]">
+              <div className="inline-block border border-black/10 bg-black/5 px-4 py-1.5 mb-6 rounded-full text-[9px] font-semibold tracking-widest uppercase">
+                Phase 3: Brand Identity
               </div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-black">
-                Website Architecture Workshop
-              </h1>
-              <p className="text-sm text-black/60 mb-10 max-w-md mx-auto leading-relaxed font-light">
-                A 15-step interactive diagnostic to define the precise user experience, content strategy, and visual aesthetic for the new NetZero India digital platform.
+              <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-black">
+                Brand Strategy Workshop
+              </h2>
+              <p className="text-xs text-black/60 mb-10 max-w-sm mx-auto leading-relaxed font-normal">
+                A 15-step interactive diagnostic to define the precise role, audience, and archetype for the NetZero India identity.
               </p>
+
+              {/* User Details Form */}
+              <div className="w-full max-w-sm mx-auto mb-10 space-y-4 text-left">
+                <div>
+                  <label className="block text-[10px] font-semibold text-black/50 uppercase tracking-widest mb-1.5 ml-1">Your Name</label>
+                  <input 
+                    type="text"
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                    placeholder="Enter your full name"
+                    className="w-full bg-white/60 border border-white focus:border-blue-900/30 focus:bg-white rounded-2xl text-xs py-3.5 px-5 outline-none transition-all shadow-sm placeholder-black/30 text-black font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-semibold text-black/50 uppercase tracking-widest mb-1.5 ml-1">Email Address</label>
+                  <input 
+                    type="email"
+                    value={userEmail}
+                    onChange={(e) => setUserEmail(e.target.value)}
+                    placeholder="you@company.com"
+                    className="w-full bg-white/60 border border-white focus:border-blue-900/30 focus:bg-white rounded-2xl text-xs py-3.5 px-5 outline-none transition-all shadow-sm placeholder-black/30 text-black font-medium"
+                  />
+                </div>
+              </div>
+
               <button 
                 onClick={() => changeStep(1)}
-                className="flex items-center justify-center px-8 py-3.5 bg-gradient-to-r from-blue-950/90 to-emerald-950/90 backdrop-blur-md border border-white/10 text-white rounded-2xl font-medium text-sm hover:opacity-100 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+                disabled={!userName.trim() || !userEmail.includes('@')}
+                className="flex items-center justify-center px-8 py-3.5 bg-gradient-to-r from-blue-950/95 to-emerald-950/95 backdrop-blur-md border border-white/10 text-white rounded-2xl font-medium text-xs hover:opacity-100 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:cursor-not-allowed"
               >
-                Begin UI/UX Diagnostic
-                <ArrowRight className="ml-2 w-4 h-4" />
+                Begin Workshop <ArrowRight className="ml-2 w-4 h-4" />
               </button>
             </div>
           )}
 
           {/* STEPS 1-15: QUESTIONS */}
           {currentQuestion && (
-            <div className="w-full glass-panel p-8 md:p-12 rounded-3xl">
+            <div className="w-full glass-panel p-8 md:p-12 rounded-[2rem]">
               
-              <div className="flex items-start justify-between gap-4 mb-6">
-                <h2 className="text-xl md:text-2xl font-medium tracking-tight leading-relaxed text-black">
-                  {currentQuestion.text}
-                </h2>
+              {/* Progress & Tooltip Header */}
+              <div className="flex justify-between items-center mb-8 pb-4 border-b border-black/5">
+                <span className="font-medium tracking-widest uppercase text-[10px] text-black/40">Step {String(step).padStart(2, '0')} of {QUESTIONS.length}</span>
                 <button 
                   onClick={() => setShowExplanation(!showExplanation)}
-                  className={`mt-1 flex-shrink-0 p-2 rounded-full transition-all ${showExplanation ? 'bg-gradient-to-br from-blue-950/90 to-emerald-950/90 backdrop-blur-md border border-white/10 text-white shadow-md' : 'bg-black/5 text-black/40 hover:bg-black/10 hover:text-black'}`}
-                  title="Why are we asking this?"
+                  className={`flex items-center gap-1.5 text-[9px] font-semibold uppercase tracking-widest transition-colors px-3 py-1.5 rounded-full ${showExplanation ? 'bg-black text-white' : 'bg-black/5 text-black/50 hover:bg-black/10'}`}
                 >
-                  <Info size={18} />
+                  <Info className="w-3 h-3" /> {showExplanation ? 'Close' : 'Why ask this?'}
                 </button>
               </div>
 
-              {/* Tooltip / Explanation Box */}
-              <div className={`overflow-hidden transition-all duration-300 ease-in-out ${showExplanation ? 'max-h-40 opacity-100 mb-8' : 'max-h-0 opacity-0 mb-0'}`}>
-                <div className="p-4 bg-[#f8f9fa] border border-black/5 rounded-2xl text-xs text-black/70 leading-relaxed font-light">
-                  <span className="font-semibold text-black mb-1 block flex items-center gap-1.5">
-                    <Info size={12} /> Strategic Rationale:
-                  </span>
-                  {currentQuestion.why}
+              {/* Tooltip Explanation Box */}
+              {showExplanation && (
+                <div className="mb-6 p-4 bg-blue-50 border border-blue-100 rounded-xl text-xs text-blue-900 leading-relaxed font-medium shadow-inner animate-in fade-in slide-in-from-top-2">
+                  <span className="font-bold mr-1">Insight:</span> {currentQuestion.explanation}
                 </div>
-              </div>
+              )}
+
+              <h2 className="text-xl md:text-2xl font-semibold tracking-tight mb-8 leading-snug text-black">
+                {currentQuestion.text}
+              </h2>
 
               {currentQuestion.type === 'text' ? (
                 <div className="flex flex-col gap-6">
@@ -357,49 +392,49 @@ export default function WebsiteWorkshopApp() {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={(e) => handleKeyDown(e, currentQuestion.id)}
-                    placeholder="Type your perspective here..."
-                    className="w-full bg-black/5 border border-transparent focus:border-black/20 focus:bg-white rounded-2xl text-base py-4 px-5 placeholder-black/30 outline-none transition-all"
+                    placeholder="Type your answer here..."
+                    className="w-full bg-white/60 border border-white rounded-2xl text-sm py-4 px-5 focus:border-blue-900/30 focus:bg-white outline-none shadow-sm placeholder-black/20 font-medium transition-all"
                     autoFocus
                   />
-                  <div className="flex justify-between items-center mt-6">
+                  <div className="flex justify-between items-center mt-4">
                     <button 
                       onClick={() => changeStep(step - 1)}
-                      className="flex items-center text-xs font-semibold text-black/50 hover:text-black transition-colors px-4 py-2"
+                      className="flex items-center text-[10px] font-semibold uppercase tracking-widest text-black/40 hover:text-black transition-colors"
                     >
-                      <ArrowLeft className="mr-2 w-4 h-4" /> Back
+                      <ArrowLeft className="mr-2 w-3 h-3" /> Back
                     </button>
                     <button 
                       onClick={() => handleTextSubmit(currentQuestion.id)}
                       disabled={!inputValue.trim()}
-                      className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-950/90 to-emerald-950/90 backdrop-blur-md border border-white/10 text-white rounded-2xl font-medium text-sm disabled:opacity-30 hover:opacity-100 hover:shadow-lg transition-all"
+                      className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-950/95 to-emerald-950/95 text-white border border-white/10 rounded-2xl font-medium text-xs disabled:opacity-30 hover:opacity-100 hover:shadow-md transition-all"
                     >
-                      Continue <ArrowRight className="ml-2 w-4 h-4" />
+                      Next <ArrowRight className="ml-2 w-3 h-3" />
                     </button>
                   </div>
                 </div>
               ) : (
                 <div className="flex flex-col gap-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {currentQuestion.options.map((opt, idx) => (
                       <button
                         key={idx}
                         onClick={() => handleChoice(currentQuestion.id, opt)}
-                        className={`text-left p-5 rounded-2xl border text-sm font-medium transition-all duration-300 flex justify-between items-center group
+                        className={`text-left p-4 rounded-2xl border font-medium text-xs transition-all duration-200 flex justify-between items-center group
                           ${answers[currentQuestion.id] === opt 
-                            ? 'bg-gradient-to-r from-blue-950/90 to-emerald-950/90 backdrop-blur-md text-white border-white/20 shadow-lg' 
-                            : 'bg-white/40 border-white/60 text-black/70 hover:bg-white/80 hover:border-white/80 hover:text-black hover:shadow-sm'}`}
+                            ? 'bg-gradient-to-r from-blue-950/95 to-emerald-950/95 border-white/10 text-white shadow-md' 
+                            : 'bg-white/60 border-white text-black/70 hover:bg-white hover:shadow-sm'}`}
                       >
-                        <span className="pr-4 leading-relaxed">{opt}</span>
-                        {answers[currentQuestion.id] === opt && <Check className="w-4 h-4 flex-shrink-0" />}
+                        <span>{opt}</span>
+                        {answers[currentQuestion.id] === opt && <Check className="w-4 h-4" />}
                       </button>
                     ))}
                   </div>
-                  <div className="mt-8 flex justify-start">
+                  <div className="mt-6 flex justify-start">
                     <button 
                       onClick={() => changeStep(step - 1)}
-                      className="flex items-center text-xs font-semibold text-black/50 hover:text-black transition-colors px-2 py-2"
+                      className="flex items-center text-[10px] font-semibold uppercase tracking-widest text-black/40 hover:text-black transition-colors"
                     >
-                      <ArrowLeft className="mr-2 w-4 h-4" /> Go Back
+                      <ArrowLeft className="mr-2 w-3 h-3" /> Back
                     </button>
                   </div>
                 </div>
@@ -409,133 +444,109 @@ export default function WebsiteWorkshopApp() {
 
           {/* STEP 16: SUMMARY / DATA EXPORT */}
           {step === QUESTIONS.length + 1 && (
-            <div className="w-full pb-10">
-              
-              {/* HIDDEN PRINT CONTAINER FOR FLAWLESS PDF GENERATION */}
-              <div className="absolute top-0 left-0 -z-50 opacity-0 pointer-events-none">
-                <div id="print-container" className="w-[800px] bg-white p-8 text-black" style={{ fontFamily: "'Poppins', sans-serif" }}>
-                  <div className="mb-8 border-b-2 border-black pb-4">
-                    <h1 className="text-3xl font-bold mb-1 text-black">Website Architecture Blueprint</h1>
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">NetZero India Foundation x PurpleBlue House</p>
+            <div className="w-full">
+              <div className="glass-panel rounded-[2rem] p-8 md:p-12 relative overflow-hidden">
+                
+                {/* Header for Summary */}
+                <div className="mb-6 border-b border-black/5 pb-4 flex justify-between items-end">
+                  <div>
+                    <h2 className="text-2xl font-semibold tracking-tight text-black mb-1">Brand Blueprint</h2>
+                    <p className="text-[10px] text-black/50 uppercase tracking-widest font-medium">Review & Export Strategy</p>
                   </div>
-
-                  {}
-                  {aiSummary && (
-                    <div className="mb-8 bg-[#f8f9fa] p-6 rounded-xl border border-gray-200 break-inside-avoid">
-                      <div className="text-sm font-bold text-gray-800 uppercase tracking-widest mb-3">
-                        AI Strategic Summary
-                      </div>
-                      <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                        {aiSummary}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="space-y-6">
-                    {QUESTIONS.map((q, idx) => (
-                      <div key={q.id} className="break-inside-avoid pb-4 border-b border-gray-200">
-                        <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
-                          Parameter {String(idx + 1).padStart(2, '0')}
-                        </div>
-                        <div className="font-bold text-sm text-gray-700 mb-2 leading-relaxed">
-                          {q.text}
-                        </div>
-                        <div className="font-bold text-base text-black">
-                          {answers[q.id] || "—"}
-                        </div>
-                      </div>
-                    ))}
+                  
+                  {/* Supabase Sync Status Indicator */}
+                  <div className="flex items-center gap-1.5 text-[9px] uppercase tracking-widest font-semibold">
+                    {syncStatus === 'saving' && <span className="text-black/50 animate-pulse">Syncing...</span>}
+                    {syncStatus === 'success' && <><CheckCircle className="w-3 h-3 text-emerald-600" /><span className="text-emerald-600">Saved to Cloud</span></>}
+                    {syncStatus === 'error' && <><CloudOff className="w-3 h-3 text-red-500" /><span className="text-red-500">Sync Failed</span></>}
                   </div>
                 </div>
-              </div>
 
-              <div className="glass-panel p-8 md:p-12 rounded-3xl mb-8 relative">
-                
-                {/* On-Screen UI View */}
-                <div id="pdf-report-content" className="bg-white/50 backdrop-blur-md rounded-2xl p-6 md:p-8 mb-8 border border-white/80 shadow-sm relative text-left">
-                  
-                  <div className="mb-6 border-b border-black/10 pb-4">
-                    <h2 className="text-2xl font-semibold tracking-tight text-black">Workshop Summary</h2>
-                    <p className="text-xs text-black/50 mt-1 font-medium">Review your strategic parameters before exporting.</p>
+                {/* Participant Details Box */}
+                <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 bg-white/40 rounded-2xl p-4 border border-white shadow-sm">
+                  <div>
+                    <div className="text-[9px] font-semibold text-black/40 uppercase tracking-widest mb-0.5">Participant Name</div>
+                    <div className="text-xs font-semibold text-black">{userName}</div>
                   </div>
+                  <div>
+                    <div className="text-[9px] font-semibold text-black/40 uppercase tracking-widest mb-0.5">Email Address</div>
+                    <div className="text-xs font-semibold text-black">{userEmail}</div>
+                  </div>
+                </div>
 
-                  {}
-                  <div className="mb-6 bg-gradient-to-br from-blue-50 to-emerald-50 border border-blue-900/10 rounded-2xl p-5 relative overflow-hidden shadow-inner">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-blue-950 to-emerald-950"></div>
-                    <h3 className="text-sm font-semibold text-blue-950 flex items-center gap-2 mb-3">
-                      <Sparkles size={16} className="text-emerald-700" /> Executive Strategy Summary
-                    </h3>
-                    {isGeneratingSummary ? (
-                      <div className="flex items-center text-sm text-blue-900/60 py-4 font-medium">
-                        <Loader2 size={16} className="animate-spin mr-2" />
-                        Analyzing parameters & generating strategic insights...
+                {/* AI Executive Summary Box */}
+                <div className="mb-8 bg-gradient-to-br from-blue-50/80 to-emerald-50/80 border border-blue-900/10 rounded-2xl p-5 relative shadow-inner">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Sparkles className="w-4 h-4 text-blue-900" />
+                    <h3 className="text-[10px] font-semibold text-blue-900 uppercase tracking-widest">AI Brand Summary</h3>
+                  </div>
+                  {isGeneratingSummary ? (
+                    <div className="flex items-center gap-3 text-xs text-black/50 font-medium py-4">
+                      <div className="w-4 h-4 border-2 border-black/20 border-t-blue-900 rounded-full animate-spin"></div>
+                      Synthesizing strategic brand architecture...
+                    </div>
+                  ) : (
+                    <div className="text-xs text-black/80 leading-relaxed font-medium space-y-3 whitespace-pre-wrap">
+                      {aiSummary}
+                    </div>
+                  )}
+                </div>
+
+                {/* Responses List (Scrollable Area) */}
+                <div className="mb-8 max-h-[300px] overflow-y-auto custom-scroll pr-3 space-y-3">
+                  <h3 className="text-[10px] font-semibold text-black uppercase tracking-widest mb-3 sticky top-0 bg-white/80 backdrop-blur pt-1 pb-2 z-10">Workshop Data Log</h3>
+                  {QUESTIONS.map((q, idx) => (
+                    <div key={q.id} className="bg-white/50 rounded-xl p-4 border border-white shadow-sm hover:shadow-md transition-shadow">
+                      <div className="text-[9px] font-semibold text-black/40 uppercase tracking-wider mb-1.5 flex gap-2">
+                        <span>{String(idx + 1).padStart(2, '0')}.</span>
+                        <span>{q.text}</span>
                       </div>
-                    ) : aiSummary ? (
-                      <p className="text-sm text-blue-950/80 leading-relaxed whitespace-pre-wrap">
-                        {aiSummary}
-                      </p>
+                      <div className="text-xs font-semibold text-black">
+                        {answers[q.id] || "—"}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button 
+                    onClick={exportPDF}
+                    disabled={isGeneratingPDF || isGeneratingSummary}
+                    className="flex-1 flex items-center justify-center px-6 py-3.5 bg-gradient-to-r from-blue-950/95 to-emerald-950/95 text-white border border-white/10 rounded-2xl font-medium text-xs hover:opacity-100 hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+                  >
+                    {isGeneratingPDF ? (
+                      <span className="animate-pulse">Generating PDF...</span>
                     ) : (
-                      <p className="text-sm text-blue-900/50 italic">AI Summary could not be generated.</p>
+                      <><Download className="mr-2 w-4 h-4" /> Export as PDF</>
                     )}
-                  </div>
-
-                  {/* Scrollable Summary List */}
-                  <div className="space-y-6 mb-8 max-h-[40vh] overflow-y-auto pr-4">
-                    {QUESTIONS.map((q, idx) => (
-                      <div key={q.id} className="pb-4 border-b border-black/5 last:border-0">
-                        <div className="text-[10px] font-semibold text-black/40 uppercase tracking-wider mb-1">
-                          Parameter {String(idx + 1).padStart(2, '0')}
-                        </div>
-                        <div className="text-sm font-medium text-black/70 mb-2 leading-relaxed">
-                          {q.text}
-                        </div>
-                        <div className="text-base font-semibold text-black">
-                          {answers[q.id] || <span className="text-black/30 italic">Not answered</span>}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-black/10">
-                    <button 
-                      onClick={generatePDF}
-                      disabled={isGeneratingPDF}
-                      className="flex-1 flex items-center justify-center px-6 py-3.5 bg-gradient-to-br from-blue-950/90 to-emerald-950/90 backdrop-blur-md border border-white/20 text-white rounded-2xl font-medium text-sm hover:opacity-100 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70"
-                    >
-                      {isGeneratingPDF ? (
-                        <><Loader2 className="mr-2 w-4 h-4 animate-spin" /> Generating PDF...</>
-                      ) : (
-                        <><Download className="mr-2 w-4 h-4" /> Export as PDF</>
-                      )}
-                    </button>
-                    <button 
-                      onClick={() => {
-                        setAnswers({});
-                        setAiSummary(null);
-                        changeStep(0);
-                      }}
-                      className="flex-1 flex items-center justify-center px-6 py-3.5 bg-white/60 backdrop-blur-sm border border-white/80 text-black rounded-2xl font-medium text-sm hover:bg-white hover:shadow-sm transition-all duration-300"
-                    >
-                      <RefreshCcw className="mr-2 w-4 h-4" /> Reset Workshop
-                    </button>
-                  </div>
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setAnswers({});
+                      setAiSummary(null);
+                      setUserName('');
+                      setUserEmail('');
+                      setSyncStatus('idle');
+                      changeStep(0);
+                    }}
+                    className="flex-1 flex items-center justify-center px-6 py-3.5 bg-white/60 backdrop-blur-sm border border-white text-black/70 rounded-2xl font-medium text-xs hover:bg-white hover:text-black hover:shadow-sm transition-all duration-300"
+                  >
+                    <RefreshCcw className="mr-2 w-4 h-4" /> Reset Workshop
+                  </button>
                 </div>
               </div>
             </div>
           )}
-        </div>
-      </main>
 
-      {/* FOOTER */}
-      <footer className="relative z-20 w-full bg-gradient-to-r from-blue-950/95 to-emerald-950/95 backdrop-blur-xl text-white p-6 flex flex-col items-center justify-center border-t border-white/10">
-        <p className="text-xs font-light tracking-wide opacity-80">
-          Prepared for NetZero India Foundation by PurpleBlue House
-        </p>
-        <p className="text-[10px] font-medium tracking-widest uppercase opacity-40 mt-1">
-          Website Strategy & Experience Mapping • 2026
-        </p>
+        </div>
+      </div>
+
+      {/* Footer - Fixed Bottom */}
+      <footer className="w-full px-8 py-4 flex items-center justify-center bg-gradient-to-r from-blue-950 to-emerald-950 text-white/80 text-[9px] tracking-[0.2em] uppercase font-semibold z-20 flex-shrink-0">
+         PurpleBlue House © 2026 | Brand Strategy Workshop
       </footer>
+      
     </div>
   );
 }
